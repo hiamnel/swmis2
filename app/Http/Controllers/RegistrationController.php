@@ -19,6 +19,7 @@ class RegistrationController extends Controller
             'lastname'       => 'required|string|max:200',
             'middle_initial' => 'nullable|string|size:1',
             'birthdate'      => 'required|date',
+            'email_add'      => 'required|email',
             'contact_number' => 'required|string|size:11',
             'username'       => 'required|string|max:200|unique:users',
             'password'       => 'required|string|min:4|confirmed',
