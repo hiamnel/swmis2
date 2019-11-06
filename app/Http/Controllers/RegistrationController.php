@@ -18,7 +18,7 @@ class RegistrationController extends Controller
             'firstname'      => 'required|string|max:200|regex:/^[a-zA-Z ]+$/',
             'lastname'       => 'required|string|max:200',
             'middle_initial' => 'nullable|string|size:1',
-            'birthdate'      => 'required|date',
+            'idnumber'      => 'required|string|size:8',
             'contact_number' => 'required|string|size:11',
             'username'       => 'required|string|max:200|unique:users',
             'password'       => 'required|string|min:4|confirmed',
@@ -30,7 +30,7 @@ class RegistrationController extends Controller
         $user->firstname      = $request->input('firstname');
         $user->lastname       = $request->input('lastname');
         $user->middle_initial = $request->input('middle_initial');
-        $user->birthdate      = $request->input('birthdate');
+        $user->idnumber      = $request->input('idnumber');
         $user->contact_number = $request->input('contact_number');
         $user->username       = $request->input('username');
         $user->password       = bcrypt($request->input('password'));
