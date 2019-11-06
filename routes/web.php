@@ -10,6 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
+use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'HomeController@index');
 Route::get('view/{projectId}', 'HomeController@viewProject');
@@ -23,13 +24,17 @@ Route::post('login', 'LoginController@doLogin');
 Route::get('logout', 'LogoutController@doLogout');
 
 Route::get('projects', 'ProjectController@showProjectsListPage');
+Route::get('projects/search', 'ProjectController@doSearch');
 Route::post('projects', 'ProjectController@doCreateProject');
 Route::get('projects/create', 'ProjectController@showCreateProjectPage');
 Route::get('projects/{project}/edit', 'ProjectController@showEditProjectPage');
 Route::put('projects/{project}', 'ProjectController@doEditProject');
 Route::get('projects/{project}/preview', 'ProjectController@preview');
+Route::delete('projects/{project}', 'ProjectController@doDeleteProject');
+Route::get('projects/{project}/print-approval', 'ProjectController@doDeleteProject');
 
-Route::get('projects/pdf', 'ProjectController@showPdf');
+Route::get('profile', 'ProfileController@showProfilePage');
+Route::put('profile', 'ProfileController@doUpdateProfile');
 
 /**
  * ADMIN ROUTES
@@ -86,4 +91,11 @@ Route::group(['namespace' => 'Adviser'], function () {
     Route::get('my-handled-projects', 'HandledProjectsController@index');
     Route::get('my-handled-projects/{project}', 'HandledProjectsController@show');
     Route::put('my-handled-projects/{project}', 'HandledProjectsController@update');
+});
+
+Route::group(['prefix' => 'reports'], function () {
+    Route::get('monthly-view', 'User\ReportsController@monthlyViews');
+    Route::get('handled-yearly', 'Adviser\ReportsController@adminReports');
+    Route::get('adviser-yearly', 'Admin\ReportsController@adviserReports');
+    Route::get('get-project-by-semester', 'Adviser\ReportsController@getProjectBySemester');
 });
