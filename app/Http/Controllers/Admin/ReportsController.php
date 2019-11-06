@@ -33,4 +33,5 @@ class ReportsController extends \App\Http\Controllers\Adviser\ReportsController
 
         return $this->formatData($projects);
     }
+    
 }
