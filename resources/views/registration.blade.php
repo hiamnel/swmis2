@@ -41,9 +41,9 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-3 col-form-label"><font color="red"> *</font>Birthdate</label>
+                            <label class="col-sm-3 col-form-label"><font color="red"> *</font>ID Number</label>
                             <div class="col-sm-9">
-                                <input type="date" class="form-control" name="birthdate" value="{{ old('birthdate') }}">
+                                <input type="text" class="form-control" name="idnumber" value="{{ old('idnumber') }}">
                             </div>
                         </div>
                         <div class="form-group row">
