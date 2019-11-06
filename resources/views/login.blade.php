@@ -30,6 +30,7 @@
                                 <input type="text" class="form-control" name="username" value="{{ old('username') }}" placeholder="Input username here">
                             </div>
                         </div>
+                        
                         <div class="form-group row">
                             <label  class="col-sm-3 col-form-label">Password</label>
                             <div class="col-sm-9">
