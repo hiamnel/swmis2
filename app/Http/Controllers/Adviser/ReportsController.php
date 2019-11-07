@@ -12,6 +12,7 @@ namespace App\Http\Controllers\Adviser;
 use App\Http\Controllers\Controller;
 use App\Project;
 use App\User;
+use App\ProjectPanel;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -47,12 +48,17 @@ class ReportsController extends Controller
     protected function prepareData(Request $request)
     {
 
-        /** @var Collection $projects */
-        $projects = Auth::user()->handledProjects()
+        if ($request->role == 'Adviser') {
+            /** @var Collection $projects */
+            $projects = Auth::user()->handledProjects()
                         ->whereNotNull('date_submitted')
                         ->where('project_status', '=', 'approved')
                         ->get();
-
+        } else {
+            $projects = Project::whereHas('project_panel', function($q){
+                $q->where(['panel_id' => Auth::user()->id]);
+            })->get();
+        }
 
         return $this->formatData($projects);
     }
@@ -94,6 +100,7 @@ class ReportsController extends Controller
         $sem = $request->semester;
         $year = $request->year;
         $adviserId = $request->adviserId;
+        $role = $request->role;
         $isAdviser = Auth::user()->isRole('adviser');
         if ($year && $sem) {
             $semester  = Project::determinePeriod($year, $sem);
@@ -102,13 +109,18 @@ class ReportsController extends Controller
             $query->whereNotNull('date_submitted')->where(['project_status' => 'approved']);
 
             if ($isAdviser) {
-                $query->where(['adviser_id' => Auth::user()->id]);
+                if ($role == 'Adviser') {
+                    $query->where(['adviser_id' => Auth::user()->id]);
+                } else {
+                    $query->whereHas('project_panel', function($q){
+                        $q->where(['panel_id' => Auth::user()->id]);
+                    });
+                }
             } else if (isset($adviserId)) {
                 $query->where(['adviser_id' => $adviserId]);
             } 
 
             $projects = $query->with('authors', 'panel', 'adviser', 'area')->get();
-
         
             $results = $projects->filter(function (Project $project) use ($semester) {
                     return Carbon::parse($project->date_submitted)->between(

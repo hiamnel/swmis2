@@ -7,9 +7,13 @@ use Illuminate\Http\Request;
 
 class LoginController extends Controller
 {
-    public function showLoginPage()
+    public function showLoginPage(request $request)
     {
-        return view('login');
+        if($request->session()->get('username')!=null){
+            return redirect('/');
+        }else{
+            return view('login');
+        }
     }
 
     public function doLogin(Request $request)

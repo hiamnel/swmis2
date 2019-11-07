@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Auth;
+use App\Panel;
 use App\Area;
 use App\User;
 use App\Project;
@@ -25,21 +26,43 @@ class ProjectController extends Controller
             'title'      => 'sometimes|nullable|string',
             'adviser_id' => 'sometimes|nullable|int'
         ]);
+        // echo Auth::user()->isRole(User::USER_TYPE_ADMIN);
+        // if(Auth::user() == NULL){
+        //     // redirect('/');
+        //     echo 'ERROR 404';
+        } else {
+              $query = Project::with(['adviser', 'area', 'authors'])
+                                    ->when(Auth::user()->isRole(User::USER_TYPE_ADMIN),
+                                        function (Builder $builder) use ($validator) {
+                                            return $builder->where('project_status', '=', 'approved')
+                                                           ->when((($q = request('title')) && $validator->passes()),
+                                                               function (Builder $query) use ($q) {
+                                                                   return $query->where('title', 'like', "%{$q}%");
+                                                               })
+                                                           ->when((($adviserId = request('adviser_id')) && $validator->passes()),
+                                                               function (Builder $query) use ($adviserId) {
+                                                                   return $query->where('adviser_id', '=', $adviserId);
+                                                               });
+                                        });
+            
 
+            $projects = $query->paginate(5);
 
-        $query = Project::with(['adviser', 'area', 'authors'])
-                        ->when(Auth::user()->isRole(User::USER_TYPE_ADMIN),
-                            function (Builder $builder) use ($validator) {
-                                return $builder->where('project_status', '=', 'approved')
-                                               ->when((($q = request('title')) && $validator->passes()),
-                                                   function (Builder $query) use ($q) {
-                                                       return $query->where('title', 'like', "%{$q}%");
-                                                   })
-                                               ->when((($adviserId = request('adviser_id')) && $validator->passes()),
-                                                   function (Builder $query) use ($adviserId) {
-                                                       return $query->where('adviser_id', '=', $adviserId);
-                                                   });
-                            });
+                    return view('projects.index', [
+                        'projects' => $projects,
+                        'advisers' => User::query()
+                                          ->select('id', 'firstname', 'lastname', 'middle_initial')
+                                          ->where('user_role', '=', User::USER_TYPE_ADVISER)
+                                          ->orderBy('lastname')
+                                          ->get()
+                                          ->pluck('fullname', 'id')
+                                          ->all()
+
+                    ]);
+            }
+
+         
+      
 
 //
 //        if ($validator->passes()) {
@@ -51,19 +74,7 @@ class ProjectController extends Controller
 //        }
 
 
-        $projects = $query->paginate(5);
-
-        return view('projects.index', [
-            'projects' => $projects,
-            'advisers' => User::query()
-                              ->select('id', 'firstname', 'lastname', 'middle_initial')
-                              ->where('user_role', '=', User::USER_TYPE_ADVISER)
-                              ->orderBy('lastname')
-                              ->get()
-                              ->pluck('fullname', 'id')
-                              ->all()
-
-        ]);
+        
     }
 
     public function showEditProjectPage(Project $project)
@@ -148,6 +159,8 @@ class ProjectController extends Controller
             }
 
             $project->uploaded_file_path = $request->file('file')->store($request->user()->id, 'public');
+
+            dd($request->file('file'));
 
             $project->save();
             $project->panel()->attach($request->input('panel_ids'));
