@@ -39,10 +39,10 @@
                                     <td>{{ $adviser->middle_initial }}</td>
                                     <td>{{ $adviser->username }}</td>
                                     <td>
-                                        <a href="{{ url("advisers/{$adviser->id}/edit") }}" class="mr-2">Edit</a>
+                                        <a class="btn btn-success px-3" href="{{ url("advisers/{$adviser->id}/edit") }}" class="mr-2">Edit</a>
                                         <form class="delete-form" action="{{ url("advisers/{$adviser->id}/delete") }}">
                                             {{ csrf_field() }}
-                                            <a href="#" onclick="confirmDelete(this)" class="text-danger">Delete
+                                            <a class="btn btn-danger px-3" href="#" onclick="confirmDelete(this)" class="text-danger">Delete
                                             </a>
                                         </form>
                                     </td>

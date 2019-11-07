@@ -15,6 +15,7 @@ class ReportController extends Controller {
 	{
 		$sem = $request->semester + 1;
         $year = $request->year;
+        $role = $request->role;
         $adviserId = $request->adviserId;
         $isAdviser = Auth::user()->isRole('adviser');
         if ($year && $sem) {
@@ -24,14 +25,19 @@ class ReportController extends Controller {
             $query->whereNotNull('date_submitted')->where(['project_status' => 'approved']);
 
             if ($isAdviser) {
-                $query->where(['adviser_id' => Auth::user()->id]);
+                if ($role == 'Adviser') {
+                    $query->where(['adviser_id' => Auth::user()->id]);
+                } else {
+                    $query->whereHas('project_panel', function($q){
+                        $q->where(['panel_id' => Auth::user()->id]);
+                    });
+                }
             } else if (isset($adviserId)) {
                 $query->where(['adviser_id' => $adviserId]);
             } 
 
             $projects = $query->with('authors', 'panel', 'adviser', 'area')->get();
 
-        
             $results = $projects->filter(function (Project $project) use ($semester) {
                     return Carbon::parse($project->date_submitted)->between(
                         Carbon::parse($semester[0]),
@@ -43,6 +49,7 @@ class ReportController extends Controller {
             $data = [
 				'results' => $results,
 				'isAdviser' => $isAdviser,
+				'role' => $role,
 				'semester' => $sem == 1 ? '1st Semester ' . $year : '2nd Semester ' . $year
 			]; 
 

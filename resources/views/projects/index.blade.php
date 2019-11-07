@@ -83,7 +83,7 @@
                                 <th>Authors</th>
                                 <th>Panelist</th>
                                 <th>Adviser</th>
-                                <th>Area</th>
+                                <th>Subject Area</th>
                                 <th>Call Number</th>
                                 <th></th>
                                 <th></th>

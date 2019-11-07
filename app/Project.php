@@ -18,12 +18,12 @@ class Project extends Model
 
     const SEMESTER = [
         '1' => [
-            'start' => '08-01',
-            'end'   => '12-31'
+            'start' => '06-01',
+            'end'   => '10-31'
         ],
         '2' => [
-            'start' => '01-01',
-            'end'   => '05-31'
+            'start' => '11-01',
+            'end'   => '03-31'
         ],
 
     ];
@@ -54,6 +54,11 @@ class Project extends Model
     public function adviser()
     {
         return $this->belongsTo(User::class, 'adviser_id');
+    }
+
+    public function project_panel()
+    {
+        return $this->belongsTo(ProjectPanel::class, 'id', 'project_id');
     }
 
     public function panel()

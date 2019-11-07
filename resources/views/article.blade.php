@@ -23,14 +23,10 @@
         </div>
     </div>
     <div class="row">
-        <div class="col-sm-5 offset-sm-2">
+        <div class="col-sm-8 offset-sm-0">
             <div class="card">
                 <div class="card-body border-bottom">
                         <dl class="row">
-                            <dt class="col-md-2">Call #</dt>
-                            <dd class="col-md-10">
-                                {{ $project->call_number }}
-                            </dd>
                             <dt class="col-md-2">Title</dt>
                             <dd class="col-md-10">
                                 <h3 class="card-title mb-0" style="font-size:1.2rem">
@@ -44,15 +40,26 @@
                                     {!! $project->authors->pluck('fullname')->implode('</span><span class="badge badge-secondary mr-1 text-white"><i class="fas fa-user fa-fw"></i>') !!}
                                 </span>
                             </dd>
+                            
+                            <dt class="col-md-2">Abstract</dt>
+                            <dd class="col-md-10">
+                                {{ $project->abstract }}
+                            </dd>
+                            <dt class="col-md-2">Description:</dt>
+                            <dd class="col-md-10"></dd>
+                            <dt class="col-md-2">Call Number</dt>
+                            <dd class="col-md-10">
+                                {{ $project->call_number }}
+                            </dd>
+                            <dt class="col-md-2">Area</dt>
+                            <dd class="col-md-10">
+                                {{ $project->area->name }}
+                            </dd>
                             <dt class="col-md-2">Keywords</dt>
                             <dd class="col-md-10">
                                 <span class="badge badge-pill badge-info text-white mr-1">
                                     {!! $project->keywords_collection->implode('</span><span class="badge badge-pill badge-info mr-1 text-white">') !!}
                                 </span>
-                            </dd>
-                            <dt class="col-md-2">Abstract</dt>
-                            <dd class="col-md-10">
-                                {{ $project->abstract }}
                             </dd>
                         </dl>
                 </div>

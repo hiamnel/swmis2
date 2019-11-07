@@ -33,11 +33,11 @@
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $area->name }}</td>
                                     <td>
-                                        <a href="{{ url("areas/{$area->id}/edit") }}" class="mr-2">Edit</a>
+                                        <a class="btn btn-success px-3" href="{{ url("areas/{$area->id}/edit") }}" class="mr-2">Edit</a>
 
                                         <form class="delete-form" action="{{ url("areas/{$area->id}/delete") }}">
                                             {{ csrf_field() }}
-                                            <a href="#" onclick="confirmDelete(this)" class="text-danger">Delete
+                                            <a class="btn btn-danger px-3" href="#" onclick="confirmDelete(this)" class="text-danger">Delete
                                             </a>
                                         </form>
                                     </td>

@@ -23,19 +23,29 @@
             overflow:wrap;
         }
 
-        tr, td {
+        table, th, tr, td {
         	border: 1px black;
             padding: 3px;
             font-size:12px;
         }
+
+        .table tr {
+		   border: 1px solid black;
+		}
 
     </style>
 </head>
 <body>
     <!-- optional -->
     <htmlpageheader name="page-header">
-    	<?php $image_path = '/img/logo_clean.png'; ?>
-		<div align="center"><img src="{{ public_path() . $image_path }}" height="120px"></div>
+    	<table>
+    		<tr>
+    			<td align="center"><img src="{{ public_path() . '/img/usclogo.jpg' }}" height="50px"><img src="{{ public_path() . '/img/dcism.jpg' }}" height="50px"></td>
+    		</tr>
+    	</table>
+		<div align="center">University of San Carlos <br> School of Arts and Sciences<br> Department of Computer and Information Sciece and Mathematics</div><br>
+		<div align="center">Adviser Undergraduate Thesis / Capstone</div>
+
     </htmlpageheader> 
     <!-- optional -->
     <htmlpagefooter name="page-footer">
@@ -52,11 +62,12 @@
     <div>
         <div>
         	<h3 align="center">{{ $semester }}</h3>
-            <table class="table table-border">
+            <table class="table table-bordered">
             	<thead>
 
             		@if ($isAdviser)
 						<tr class="bg-primary text-white text-center">
+						  <th></th>
 	                      <th>Project Title</th>
                           <th>Authors</th>
                           <th>Adviser</th>
@@ -104,7 +115,7 @@
                         <td>{{ $result->adviser->fullname }}</td>
                         <td width="10%">{{ $result->area->name }}</td>
                         <td>{{ $result->date_submitted }}</td>
-                        <td width="10%">Adviser</td>
+                        <td width="10%">{{ $role }}</td>
                     </tr>
                 @else
                   	<tr>

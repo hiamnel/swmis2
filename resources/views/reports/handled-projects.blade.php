@@ -7,21 +7,29 @@
 
                 <div class="card">
                     <div class="card-body">
+                      <form class="form-inline mb-3" method="get">
                         @if(Auth::user()->isRole(\App\User::USER_TYPE_ADMIN))
-                        <form class="form-inline mb-3" method="get">
-
-                            <div class="form-group">
-                                <label for="" class="mr-2">Adviser</label>
-                                <select name="adviser" id="" class="form-control select2 ml-2">
-                                    <option value="">All</option>
-                                    @foreach($advisers AS $id => $name)
-                                        <option value="{{ $id }}" {{ (isset($_GET["adviser"]) && $id == $_GET["adviser"]) ? 'selected' : '' }}>{{ $name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <button type="submit" class="btn btn-secondary ml-2">Go</button>
-                        </form>
+                          <div class="form-group">
+                              <label for="" class="mr-2">Adviser</label>
+                              <select name="adviser" id="" class="form-control select2 ml-2">
+                                  <option value="">All</option>
+                                  @foreach($advisers AS $id => $name)
+                                      <option value="{{ $id }}" {{ (isset($_GET["adviser"]) && $id == $_GET["adviser"]) ? 'selected' : '' }}>{{ $name }}</option>
+                                  @endforeach
+                              </select>
+                          </div>
+                          <button type="submit" class="btn btn-secondary ml-2">Go</button>
+                        @else 
+                          <div class="form-group">
+                              <label for="" class="mr-2">Role</label>
+                              <select name="role" class="form-control select2 ml-2">
+                                  <option value="Adviser" {{ (isset($_GET["role"]) && $_GET["role"] == "Adviser") ? 'selected' : '' }}>Adviser</option>
+                                 <option value="Panel" {{ (isset($_GET["role"]) && $_GET["role"] == "Panel") ? 'selected' : '' }}>Panel</option>
+                              </select>
+                          </div>
+                          <button type="submit" class="btn btn-secondary ml-2">Go</button>
                         @endif
+                        </form>
                         
                         <canvas id="canvas"></canvas>
                         <div class="row" id="projectTable" style="display: none">
@@ -30,6 +38,7 @@
                               {{ csrf_field() }}
                               <input type="hidden" name="year">
                               <input type="hidden" name="semester">
+                              <input type="hidden" name="role">
                               <input type="hidden" name="adviserId">
                               <div class="text-right"><button type="submit" class="btn btn-primary text-right">Print</button>
                               </div>
@@ -41,7 +50,7 @@
                                   <th></th>
                                   <th>Project Title</th>
                                   <th>Authors</th>
-                                  <th>Panels</th>
+                                  <th>Panelist</th>
                                   <th>Adviser</th>
                                   <th>Subject Area</th>
                                   <th>Date</th>
@@ -55,7 +64,6 @@
                                   <th>Adviser</th>
                                   <th>Subject Area</th>
                                   <th>Date</th>
-                                  <th>Role</th>
                               </tr>
                               @endif
                             </thead>
@@ -79,7 +87,7 @@
       $(document).ready(function () {
         var urlParams = new URLSearchParams(window.location.search);
         var adviserId = urlParams.has('adviser') ? urlParams.get('adviser') : '';
-        console.log('adviserId', adviserId);
+        var role = urlParams.has('role') ? urlParams.get('role') : 'Adviser';
         var data = @json($data ?? []);
 
         console.log(data);
@@ -128,6 +136,7 @@
                 $('input[name="year"]').val(year);
                 $('input[name="semester"]').val(semester);
                 $('input[name="adviserId"]').val(adviserId);
+                $('input[name="role"]').val(role);
 
                 if (year) {
                   $.ajax({
@@ -135,7 +144,8 @@
                     data: {
                       year: year,
                       semester: semester + 1,
-                      adviserId: adviserId
+                      adviserId: adviserId,
+                      role: role
                     },
                     method: 'GET',
                     success: function(data) {
@@ -199,9 +209,6 @@
                               html += "</td>";
                               html += "<td>";
                               html += result.date_submitted;
-                              html += "</td>";
-                              html += "<td>";
-                              html += "Adviser/Panel";
                               html += "</td>";
                             html += "</tr>";
                         } else { //admin
