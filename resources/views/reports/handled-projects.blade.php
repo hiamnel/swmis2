@@ -15,16 +15,26 @@
                                 <select name="adviser" id="" class="form-control select2 ml-2">
                                     <option value="">All</option>
                                     @foreach($advisers AS $id => $name)
-                                        <option value="{{ $id }}">{{ $name }}</option>
+                                        <option value="{{ $id }}" {{ (isset($_GET["adviser"]) && $id == $_GET["adviser"]) ? 'selected' : '' }}>{{ $name }}</option>
                                     @endforeach
                                 </select>
                             </div>
                             <button type="submit" class="btn btn-secondary ml-2">Go</button>
                         </form>
                         @endif
+                        
                         <canvas id="canvas"></canvas>
-                        <div class="row">
-                          <table id="projectTable" class="table mb-0 table-hover table-striped">
+                        <div class="row" id="projectTable" style="display: none">
+                          <table class="table mb-0 table-hover table-striped">
+                            <form action="{{ url('print-report') }}" method="POST" target="_blank">
+                              {{ csrf_field() }}
+                              <input type="hidden" name="year">
+                              <input type="hidden" name="semester">
+                              <input type="hidden" name="adviserId">
+                              <div class="text-right"><button type="submit" class="btn btn-primary text-right">Print</button>
+                              </div>
+                          </form>
+                            <br>
                             <thead>
                               @if(Auth::user()->isRole(\App\User::USER_TYPE_ADMIN))
                               <tr class="bg-primary text-white">
@@ -67,7 +77,9 @@
     <script type="text/javascript" src="{{ asset('js/e.js') }}"></script>
     <script type="text/javascript">
       $(document).ready(function () {
-
+        var urlParams = new URLSearchParams(window.location.search);
+        var adviserId = urlParams.has('adviser') ? urlParams.get('adviser') : '';
+        console.log('adviserId', adviserId);
         var data = @json($data ?? []);
 
         console.log(data);
@@ -103,9 +115,7 @@
           type: 'bar',
           data: data,
           options: {
-            onClick: function(evt, array){
-              console.log('array', array);
-
+            onClick: function(evt, array){ 
               if (array.length > 0) {
                 var e =  array[0];
                 var activePoint = myBarChart.getElementAtEvent(evt)[0];
@@ -114,16 +124,21 @@
                 var label = data.datasets[semester].label;
                 var value = data.datasets[semester].data[activePoint._index];
                 var year = data.labels[e._index];
+
+                $('input[name="year"]').val(year);
+                $('input[name="semester"]').val(semester);
+                $('input[name="adviserId"]').val(adviserId);
+
                 if (year) {
                   $.ajax({
                     url:'get-project-by-semester',
                     data: {
                       year: year,
-                      semester: semester + 1
+                      semester: semester + 1,
+                      adviserId: adviserId
                     },
                     method: 'GET',
                     success: function(data) {
-                      console.log(data);
                       $("#projectTableData").html("");
                       var count = 1;
                       $.each( data.results, function( key, result ) {
@@ -198,9 +213,6 @@
                               html += result.title;
                               html += "</td>";
                               html += "<td>";
-                              html += result.date_submitted;
-                              html += "</td>";
-                              html += "<td>";
                               html += authors;
                               html += "</td>";
                               html += "<td>";
@@ -225,9 +237,8 @@
                             html += "</tr>";
                         }
 
-                            console.log(html);
-                          $("#projectTableData").append(html);
-                          count++;
+                        $("#projectTableData").append(html);
+                        count++;
                       });
 
                       $('#projectTable').attr('style', 'display:block');
@@ -238,7 +249,7 @@
                 $('#projectTable').attr('style', 'display:none');
               }
             },
-            barValueSpacing: 20,
+            barValueSpacing: 15,
             scales: {
               yAxes: [{
                 ticks: {

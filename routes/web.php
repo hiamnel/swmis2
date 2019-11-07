@@ -35,7 +35,7 @@ Route::get('projects/{project}/print-approval', 'ProjectController@doDeleteProje
 
 Route::get('profile', 'ProfileController@showProfilePage');
 Route::put('profile', 'ProfileController@doUpdateProfile');
-
+Route::post('print-report', 'ReportController@generatePdf');
 /**
  * ADMIN ROUTES
  */

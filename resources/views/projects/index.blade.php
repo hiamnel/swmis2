@@ -71,7 +71,7 @@
                                 <th>Project Title</th>
                                 <th>Date Submitted</th>
                                 <th>Authors</th>
-                                <th>Panel</th>
+                                <th>Panelist</th>
                                 <th>Adviser</th>
                                 <th>Area</th>
                                 <th>Call Number</th>
@@ -107,7 +107,7 @@
                                     <td>
                                         @if($project->is('pending'))
                                             <span class="d-block badge badge-secondary text-white mb-3">PENDING</span>
-                                        @elseif($project->is('rejected'))
+                                       @elseif($project->is('rejected'))
                                             <span class="d-block badge badge-danger text-white mb-3">REJECTED</span>
                                         @else
                                             <span class="d-block badge badge-success text-white mb-3">APPROVED</span>
