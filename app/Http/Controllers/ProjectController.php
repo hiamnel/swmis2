@@ -160,7 +160,7 @@ class ProjectController extends Controller
             ? redirect('my-projects')
             : redirect('projects');
 
-        return $redirect->with('message', 'New project has been successfully created! Please Update Adviser: {['adviser_id']} for approval ');
+        return $redirect->with('message', 'New project has been successfully created! Please Update Adviser for approval ');
     }
 
     public function doEditProject(Project $project, Request $request)
