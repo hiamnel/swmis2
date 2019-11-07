@@ -5,6 +5,16 @@
         <div class="row">
             <div class="col-sm-12">
                 <div class="card">
+                @if(!Auth::user()->isRole('admin')) @endif
+                    @if(session('message'))
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <div class="alert alert-success">
+                                {{ session('message') }}
+                            </div>
+                        </div>
+                    </div>
+                @endif
                     <div class="card-header d-flex align-items-center justify-content-between">
                         List of all projects
                         @if(in_array(Auth::user()->user_role, [\App\User::USER_TYPE_ADMIN, \App\User::USER_TYPE_ADVISER]))

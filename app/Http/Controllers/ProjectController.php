@@ -159,8 +159,12 @@ class ProjectController extends Controller
         $redirect = Auth::user()->isRole('student')
             ? redirect('my-projects')
             : redirect('projects');
-
-        return $redirect->with('message', 'New project has been successfully created! Please Update Adviser for approval ');
+        
+        if (Auth::user()->isRole('admin')){
+                return $redirect->with('message', 'New project created successfully!'); }
+        elseif (Auth::user()->isRole('student')){
+                 return $redirect->with('message', 'New project created successfully! Please update your adviser for approval '); }
+            
     }
 
     public function doEditProject(Project $project, Request $request)
