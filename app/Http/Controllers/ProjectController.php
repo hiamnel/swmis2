@@ -30,7 +30,7 @@ class ProjectController extends Controller
         // if(Auth::user() == NULL){
         //     // redirect('/');
         //     echo 'ERROR 404';
-        } else {
+        //} else {
               $query = Project::with(['adviser', 'area', 'authors'])
                                     ->when(Auth::user()->isRole(User::USER_TYPE_ADMIN),
                                         function (Builder $builder) use ($validator) {
@@ -59,7 +59,7 @@ class ProjectController extends Controller
                                           ->all()
 
                     ]);
-            }
+          //  }
 
          
       
@@ -85,6 +85,11 @@ class ProjectController extends Controller
                        ->orderBy('lastname')
                        ->get();
 
+        $advisers = User::where('user_role', User::USER_TYPE_ADVISER)
+                        ->whereNotNull('title')
+                       ->orderBy('lastname')
+                       ->get();
+
         $areas    = Area::orderBy('name')->get();
         $students = User::ofType(User::USER_TYPE_STUDENT)->get();
 
@@ -92,7 +97,8 @@ class ProjectController extends Controller
             'project'  => $project,
             'faculty'  => $faculty,
             'areas'    => $areas,
-            'students' => $students
+            'students' => $students,
+            'advisers' => $advisers
         ]);
     }
 
@@ -102,13 +108,19 @@ class ProjectController extends Controller
                        ->orderBy('lastname')
                        ->get();
 
+        $advisers = User::where('user_role', User::USER_TYPE_ADVISER)
+                        ->whereNotNull('title')
+                       ->orderBy('lastname')
+                       ->get();
+
         $areas    = Area::orderBy('name')->get();
         $students = User::ofType(User::USER_TYPE_STUDENT)->get();
 
         return view('projects.create', [
             'faculty'  => $faculty,
             'areas'    => $areas,
-            'students' => $students
+            'students' => $students,
+            'advisers' => $advisers
         ]);
     }
 
@@ -121,6 +133,7 @@ class ProjectController extends Controller
             'author_ids.*'   => 'required|exists:users,id|distinct',
             'abstract'       => 'required|string',
             'adviser_id'     => ['required', 'exists:users,id', Rule::notIn($request->input('panel_ids', []))],
+            'chair_panel_id' => ['required', 'exists:users,id', Rule::notIn($request->input('panel_ids', []))],
             'area_id'        => 'required|exists:areas,id',
             'panel_ids'      => 'required|array',
             'panel_ids.*'    => 'required|exists:users,id|distinct',
@@ -147,6 +160,7 @@ class ProjectController extends Controller
             $project->title          = $request->input('title');
             $project->abstract       = $request->input('abstract');
             $project->adviser_id     = $request->input('adviser_id');
+            $project->chair_panel_id = $request->input('chair_panel_id');
             $project->area_id        = $request->input('area_id');
             $project->keywords       = $request->input('keywords');
             $project->pages          = $request->input('pages');
@@ -195,6 +209,7 @@ class ProjectController extends Controller
             'author_ids.*'   => 'required|exists:users,id|distinct',
             'abstract'       => 'required|string',
             'adviser_id'     => 'required|exists:users,id',
+            'chair_panel_id' => 'required|exists:users,id',
             'area_id'        => 'required|exists:areas,id',
             'panel_ids'      => 'required|array',
             'panel_ids.*'    => 'required|exists:users,id|distinct',
@@ -218,6 +233,7 @@ class ProjectController extends Controller
             $project->title          = $request->input('title');
             $project->abstract       = $request->input('abstract');
             $project->adviser_id     = $request->input('adviser_id');
+            $project->chair_panel_id = $request->input('chair_panel_id');
             $project->area_id        = $request->input('area_id');
             $project->keywords       = $request->input('keywords');
             $project->pages          = $request->input('pages');

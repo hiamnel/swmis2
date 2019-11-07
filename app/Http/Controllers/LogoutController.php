@@ -9,7 +9,7 @@ class LogoutController extends Controller
 {
     public function doLogout()
     {
-        Auth::logout();
+        Auth::logout();		
         return redirect('/')->with('message', 'You have successfully logged out!');
     }
 }

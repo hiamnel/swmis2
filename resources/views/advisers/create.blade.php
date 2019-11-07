@@ -37,6 +37,16 @@
                             </div>
                         </div>
                         <div class="form-group row">
+                            <label class="col-sm-3 col-form-label">Title</label>
+                            <div class="col-sm-9">
+                                <select name="title" class="form-control" id="select2-ajax-main">
+                                    <option value=""></option>
+                                    <option value="Masters">Masters</option>
+                                    <option value="PhD">PhD</option>   
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
                             <label class="col-sm-3 col-form-label"><font color="red"> *</font>Username</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" name="username" value="{{ old('username') }}">

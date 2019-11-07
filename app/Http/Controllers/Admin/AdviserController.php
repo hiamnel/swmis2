@@ -47,6 +47,7 @@ class AdviserController extends Controller
         $adviser->firstname      = $request->input('firstname');
         $adviser->lastname       = $request->input('lastname');
         $adviser->middle_initial = $request->input('middle_initial');
+        $adviser->title          = $request->input('title');
         $adviser->username       = $request->input('username');
         $adviser->password       = bcrypt($adviser::USER_DEFAULT_PASSWORRD);
         $adviser->user_role      = $adviser::USER_TYPE_ADVISER;
@@ -68,6 +69,7 @@ class AdviserController extends Controller
         $adviser->firstname = $request->input('firstname');
         $adviser->lastname = $request->input('lastname');
         $adviser->middle_initial = $request->input('middle_initial');
+        $adviser->title = $request->input('title');
         $adviser->username = $request->input('username');   
         $adviser->save();
 

@@ -154,9 +154,10 @@
                       $.each( data.results, function( key, result ) {
                         var authors = "";
                         var panels = "";
+                        panels += "Chair Panel: " + result.chair_panel.fullname  + "</br></br>Members: </br>";
                         var authorCount = 1;
                         var panelCount = 1;
-
+ 
                         $.each( result.authors, function( key, author ) {
                           authors += authorCount + ". " + author.fullname + "</br>";
                           authorCount++;

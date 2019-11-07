@@ -36,7 +36,7 @@ class ReportController extends Controller {
                 $query->where(['adviser_id' => $adviserId]);
             } 
 
-            $projects = $query->with('authors', 'panel', 'adviser', 'area')->get();
+            $projects = $query->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
 
             $results = $projects->filter(function (Project $project) use ($semester) {
                     return Carbon::parse($project->date_submitted)->between(

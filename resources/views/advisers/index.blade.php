@@ -26,6 +26,7 @@
                                 <th>Last Name</th>
                                 <th>First Name</th>
                                 <th>M.I</th>
+                                <th>Title</th>
                                 <th>Username</th>
                                 <th></th>
                             </tr>
@@ -37,6 +38,7 @@
                                     <td>{{ $adviser->lastname }}</td>
                                     <td>{{ $adviser->firstname }}</td>
                                     <td>{{ $adviser->middle_initial }}</td>
+                                    <td>{{ $adviser->title }}</td>
                                     <td>{{ $adviser->username }}</td>
                                     <td>
                                         <a class="btn btn-success px-3" href="{{ url("advisers/{$adviser->id}/edit") }}" class="mr-2">Edit</a>

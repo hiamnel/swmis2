@@ -43,8 +43,7 @@
     			<td align="center"><img src="{{ public_path() . '/img/usclogo.jpg' }}" height="50px"><img src="{{ public_path() . '/img/dcism.jpg' }}" height="50px"></td>
     		</tr>
     	</table>
-		<div align="center">University of San Carlos <br> School of Arts and Sciences<br> Department of Computer and Information Sciece and Mathematics</div><br>
-		<div align="center">Adviser Undergraduate Thesis / Capstone</div>
+		<div align="center">University of San Carlos <br> School of Arts and Sciences<br> Department of Computer and Information Sciece and Mathematics</div><br><br>
 
     </htmlpageheader> 
     <!-- optional -->
@@ -61,6 +60,8 @@
     <br>
     <div>
         <div>
+
+		<br>@if($isAdviser) <div align="center">@if($role == 'Panel')<span>Panelist</span>@else<span>Adviser</span>@endif Undergraduate Thesis</div>@else<div align="center">List of All Undergraduate Thesis / Capstone</div>@endif
         	<h3 align="center">{{ $semester }}</h3>
             <table class="table table-bordered">
             	<thead>
@@ -80,7 +81,7 @@
 	                      <th></th>
 	                      <th>Project Title</th>
 	                      <th>Authors</th>
-	                      <th>Panels</th>
+	                      <th>Panelist</th>
 	                      <th>Adviser</th>
 	                      <th>Subject Area</th>
 	                      <th>Date</th>
@@ -92,19 +93,17 @@
                 @foreach($results as $result)
                 <?php 
                 	$authors = "";
-            		$panels = "";
+            		$panels = "Chair Panel: " . $result->chair_panel->fullname . " Members: ";
 
-            		$authorCount = 1;
-	            	$panelCount = 1;
-
-	            	foreach ($result->authors as $author) {
-		            	$authors = $authors . $authorCount . ". " . $author->fullname . "\r\n";
-		            	$authorCount++;
+            		$authorCount = count($result->authors) - 1;
+	            	foreach ($result->authors as $key => $author) {
+		            	$authors = $authors . " " . $author->fullname;
+		            	$authors = $authorCount == $key ? $authors : $authors .  ", ";
 		            }
-
-		            foreach ($result->panel as $panel) {
-		            	$panels = $panels . $panelCount . ". " . $panel->fullname . "\r\n";
-		            	$panelCount++;
+		            $panelCount = count($result->panel) - 1;
+		            foreach ($result->panel as $key => $panel) {
+		            	$panels = $panels . " " . $panel->fullname;
+		            	$panels = $panelCount == $key ? $panels : $panels .  ", ";
 		            }
                 ?>
                 @if ($isAdviser)
@@ -112,7 +111,7 @@
                     	<td>{{ $count }}</td>
                         <td>{{ $result->title }}</td>
                         <td>{{ $authors }}</td>
-                        <td>{{ $result->adviser->fullname }}</td>
+                        <td width="10%">{{ $result->adviser->fullname }}</td>
                         <td width="10%">{{ $result->area->name }}</td>
                         <td>{{ $result->date_submitted }}</td>
                         <td width="10%">{{ $role }}</td>
@@ -123,7 +122,7 @@
                         <td>{{ $result->title }}</td>
                         <td>{{ $authors }}</td>
                         <td>{{ $panels }}</td>
-                        <td>{{ $result->adviser->fullname }}</td>
+                        <td width="10%">{{ $result->adviser->fullname }}</td>
                         <td width="10%">{{ $result->area->name }}</td>
                         <td>{{ $result->date_submitted }}</td>
                         <td width="10%">{{ $result->call_number }}</td>

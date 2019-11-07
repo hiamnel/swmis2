@@ -33,6 +33,7 @@ class Project extends Model
         'abtract',
         'adviser_id',
         'area_id',
+        'chair_panel_id',
         'call_number',
         'date_submitted',
         'keywords',
@@ -54,6 +55,11 @@ class Project extends Model
     public function adviser()
     {
         return $this->belongsTo(User::class, 'adviser_id');
+    }
+
+    public function chair_panel()
+    {
+        return $this->belongsTo(User::class, 'chair_panel_id');
     }
 
     public function project_panel()
