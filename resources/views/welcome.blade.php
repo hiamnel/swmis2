@@ -66,7 +66,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-sm-8">
             <h3 class="my-4">Recent Submissions</h3>
             <div class="card">
                 @foreach($projects as $project)
