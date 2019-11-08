@@ -95,7 +95,7 @@
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label"><font color="red"> *</font>Chair Panel</label>
                             <div class="col-sm-10">
-                                <select name="chair_panel_id" class="form-control select2" multiple data-maximum-selection-length="3" data-allow-clear="true">
+                                <select name="chair_panel_id" class="form-control select2" data-allow-clear="true">
                                     <option disabled>SELECT YOUR CHAIR PANEL</option>
                                     @foreach($faculty AS $panel)
                                         <option value="{{ $panel->id }}" {{ in_array($panel->id, (array)old('panel_ids')) ? 'selected="selected"' : '' }}>{{ $panel->fullname }}</option>

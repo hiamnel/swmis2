@@ -33,6 +33,13 @@
                                     <a class="text-decoration-none" href="{{ url("view/{$project->id}") }}" >{{ $project->title }}</a>
                                 </h3>
                             </dd>
+                            <dt class="col-md-2">Adviser</dt>
+                            <dd class="col-md-10">
+                                <span class="badge badge-secondary text-white mr-1">
+                                    <i class="fas fa-user fa-fw"></i>
+                                    {!! $project->adviser->fullname !!}
+                                </span>
+                            </dd>
                             <dt class="col-md-2">Authors</dt>
                             <dd class="col-md-10">
                                 <span class="badge badge-secondary text-white mr-1">

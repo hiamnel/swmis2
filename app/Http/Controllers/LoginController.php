@@ -27,8 +27,9 @@ class LoginController extends Controller
 
         if($loggedIn){
             return redirect('/')->with('loginMessage', "Welcome, {$credentials['username']}!");
+        } else {
+            $errors = 'Password is invalid';
+            return redirect()->back()->withInput()->withErrors($errors);
         }
-
-        return redirect()->back();
     }
 }

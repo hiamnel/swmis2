@@ -60,20 +60,21 @@ class ReportsController extends Controller
             })->get();
         }
 
-        return $this->formatData($projects);
+        return $this->formatData($projects, $request);
     }
 
-    protected function formatData(Collection $projects) : Collection
+    protected function formatData(Collection $projects, $request = null) : Collection
     {
         $data = collect();
 
         $currentYear = date('Y');
-        $yearRange   = range($currentYear, $currentYear - 3, -1);
+
+        $yearRange  = isset($request) && $request->from_year && $request->to_year ? range($request->from_year, $request->to_year) : range($currentYear, $currentYear - 4, -1);
 
         foreach ($yearRange as $year) {
             $firstSem  = Project::determinePeriod($year, 1);
             $secondSem = Project::determinePeriod($year, 2);
-
+ 
             $data->put($year, [
                 '1' => $projects->filter(function (Project $project) use ($firstSem) {
                     return Carbon::parse($project->date_submitted)->between(
@@ -101,9 +102,11 @@ class ReportsController extends Controller
         $year = $request->year;
         $adviserId = $request->adviserId;
         $role = $request->role;
+
         $isAdviser = Auth::user()->isRole('adviser');
         if ($year && $sem) {
             $semester  = Project::determinePeriod($year, $sem);
+
             $query = Project::query();
 
             $query->whereNotNull('date_submitted')->where(['project_status' => 'approved']);
@@ -121,7 +124,7 @@ class ReportsController extends Controller
             } 
 
             $projects = $query->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
-        
+
             $results = $projects->filter(function (Project $project) use ($semester) {
                     return Carbon::parse($project->date_submitted)->between(
                         Carbon::parse($semester[0]),

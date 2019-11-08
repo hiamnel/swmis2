@@ -8,9 +8,39 @@
                 <div class="card">
                     <div class="card-body">
                       <form class="form-inline mb-3" method="get">
+                        <div class="form-group">
+                              <label for="" class="mr-2 ml-2">From</label>
+                              <select name="from_year" id="" class="form-control select2 ml-2">
+                                  <?php
+                                    $firstYear = (int)date('Y');
+ 
+                                    $lastYear = $firstYear - 19;
+                                    $selectedYear = isset($_GET["from_year"]) ? $_GET["from_year"] : 2015;
+                                    for($i=$firstYear;$i>=$lastYear;$i--)
+                                    {
+                                        $selected = $selectedYear == $i ? 'selected' : '';
+                                        echo '<option value='.$i.' '.$selected.'>'.$i.'</option>';
+                                    }
+                                  ?>
+                              </select>
+                              <label for="" class="mr-2 ml-2">To</label>
+                              <select name="to_year" id="" class="form-control select2 ml-2">
+                                  <?php
+                                    $firstYear = (int)date('Y');
+ 
+                                    $lastYear = $firstYear - 19;
+                                    $selectedToYear = isset($_GET["to_year"]) ? $_GET["to_year"] : (int)date('Y');
+                                    for($i=$firstYear;$i>=$lastYear;$i--)
+                                    {
+                                        $selected = $selectedToYear == $i ? 'selected' : '';
+                                        echo '<option value='.$i.' '.$selected.'>'.$i.'</option>';
+                                    }
+                                  ?>
+                              </select>
+                          </div>
                         @if(Auth::user()->isRole(\App\User::USER_TYPE_ADMIN))
                           <div class="form-group">
-                              <label for="" class="mr-2">Adviser</label>
+                              <label for="" class="mr-2 ml-2">Adviser</label>
                               <select name="adviser" id="" class="form-control select2 ml-2">
                                   <option value="">All</option>
                                   @foreach($advisers AS $id => $name)
@@ -40,6 +70,7 @@
                               <input type="hidden" name="semester">
                               <input type="hidden" name="role">
                               <input type="hidden" name="adviserId">
+                              <input type="hidden" name="test">
                               <div class="text-right"><button type="submit" class="btn btn-primary text-right">Print</button>
                               </div>
                           </form>
@@ -90,7 +121,7 @@
         var role = urlParams.has('role') ? urlParams.get('role') : 'Adviser';
         var data = @json($data ?? []);
 
-        console.log(data);
+        console.log('role', role);
 
         var semesterGroup = {
           '1st': [],
@@ -123,10 +154,13 @@
           type: 'bar',
           data: data,
           options: {
-            onClick: function(evt, array){ 
+            onClick: function(evt, array){
+
+
               if (array.length > 0) {
                 var e =  array[0];
                 var activePoint = myBarChart.getElementAtEvent(evt)[0];
+                 console.log(activePoint);
                 var data = activePoint._chart.data;
                 var semester = activePoint._datasetIndex;
                 var label = data.datasets[semester].label;
@@ -137,6 +171,7 @@
                 $('input[name="semester"]').val(semester);
                 $('input[name="adviserId"]').val(adviserId);
                 $('input[name="role"]').val(role);
+                $('input[name="test"]').val("testing");
 
                 if (year) {
                   $.ajax({
@@ -209,7 +244,7 @@
                               html += result.area.name;
                               html += "</td>";
                               html += "<td>";
-                              html += result.date_submitted;
+                              html += result.date_submitted; 
                               html += "</td>";
                             html += "</tr>";
                         } else { //admin

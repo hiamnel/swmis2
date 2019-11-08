@@ -32,16 +32,18 @@
                             <label for="">Area</label>
                             <select name="areas[]" id="" class="form-control select2" multiple>
                                 @foreach($areas AS $area)
-                                    <option value="{{ $area->id }}">{{ $area->name }}</option>
+                                    <?php $id = $area->id ?>
+                                    <option value="{{ $area->id }}" {{ (isset($_GET["areas"]) && in_array($id, $_GET["areas"]) == 1) ? 'selected' : '' }}>{{ $area->name }}</option> 
                                 @endforeach
-                            </select>
+                            </select> 
                         </div>
                         <div class="form-group">
                             <label for="">Adviser</label>
                             <select name="adviser" id="" class="form-control select2">
                                 <option value=""></option>
                                 @foreach($adviser AS $adv)
-                                    <option value="{{ $adv->id }}">{{ $adv->fullname }}</option>
+                                    <?php $id = $adv->id ?>
+                                    <option value="{{ $adv->id }}" {{ (isset($_GET["adviser"]) && $id == $_GET["adviser"]) ? 'selected' : '' }}>{{ $adv->fullname }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -49,7 +51,8 @@
                             <label for="">Author</label>
                             <select name="authors[]" id="" class="form-control select2" multiple>
                                 @foreach($student AS $stu)
-                                    <option value="{{ $stu->id }}">{{ $stu->fullname }}</option>
+                                <?php $id = $stu->id ?>
+                                    <option value="{{ $stu->id }}" {{ (isset($_GET["authors"]) && in_array($id, $_GET["authors"]) == 1) ? 'selected' : '' }}>{{ $stu->fullname }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -57,7 +60,9 @@
                             <label for="">Keywords</label>
                             <select name="keywords[]" id="" class="form-control select2" multiple>
                                 @foreach($keywords AS $keyword)
-                                    <option value="{{ $keyword }}">{{ $keyword }}</option>
+                                    <option value="{{ $keyword }}" {{ (isset($_GET["keywords"]) && in_array($keyword, $_GET["keywords"]) == 1) ? 'selected' : '' }}>{{ $keyword }}</option>
+                                }
+                                }
                                 @endforeach
                             </select>
                         </div>
@@ -78,6 +83,13 @@
                                     <a class="text-decoration-none" href="{{ url("view/{$project->id}") }}" >{{ $project->title }}</a>
                                 </h3>
                             </dd>
+                            <dt class="col-md-2">Adviser</dt>
+                            <dd class="col-md-10">
+                                <span class="badge badge-secondary text-white mr-1">
+                                    <i class="fas fa-user fa-fw"></i>
+                                    {!! $project->adviser->fullname !!}
+                                </span>
+                            </dd>
                             <dt class="col-md-2">Authors</dt>
                             <dd class="col-md-10">
                                 <span class="badge badge-secondary text-white mr-1">
@@ -95,7 +107,8 @@
                     </div>
                 @endforeach
                 <div class="pt-3 d-flex justify-content-center">
-                    {!! $projects->links() !!}
+                   
+                    {{ $projects->appends(request()->except('page'))->links() }}. 
                 </div>
             </div>
         </div>

@@ -26,7 +26,7 @@ class HomeController extends Controller
 
                                    return $query;
                                })
-                           ->when($adviser = $request->input('adviser_id'), function (Builder $query) use ($adviser) {
+                           ->when($adviser = $request->input('adviser'), function (Builder $query) use ($adviser) {
                                return $query->where('adviser_id', $adviser);
                            })
                            ->when($authors = $request->input('authors', []), function (Builder $query) use ($authors) {
@@ -35,7 +35,7 @@ class HomeController extends Controller
                                });
                            })
                            ->where('project_status', 'approved')
-                           ->with(['authors', 'area'])
+                           ->with(['authors', 'area', 'adviser'])
                            ->latest()
                            ->paginate(5);
 

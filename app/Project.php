@@ -18,12 +18,12 @@ class Project extends Model
 
     const SEMESTER = [
         '1' => [
-            'start' => '06-01',
-            'end'   => '10-31'
+            'start' => '08-01',
+            'end'   => '12-31'
         ],
         '2' => [
-            'start' => '11-01',
-            'end'   => '03-31'
+            'start' => '01-01',
+            'end'   => '05-31'
         ],
 
     ];

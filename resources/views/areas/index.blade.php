@@ -25,6 +25,7 @@
                                 <th></th>
                                 <th>Name</th>
                                 <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -32,14 +33,13 @@
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $area->name }}</td>
-                                    <td>
-                                        <a class="btn btn-success px-3" href="{{ url("areas/{$area->id}/edit") }}" class="mr-2">Edit</a>
+                                    <td class="btn btn-success px-3" href="{{ url("areas/{$area->id}/edit") }}" class="mr-2">Edit</td>
 
-                                        <form class="delete-form" action="{{ url("areas/{$area->id}/delete") }}">
+                                        <td class="delete-form" action="{{ url("areas/{$area->id}/delete") }}">
                                             {{ csrf_field() }}
                                             <a class="btn btn-danger px-3" href="#" onclick="confirmDelete(this)" class="text-danger">Delete
                                             </a>
-                                        </form>
+                                        </td>
                                     </td>
                                 </tr>
                             @empty

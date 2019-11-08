@@ -45,7 +45,7 @@ class ProjectController extends Controller
                                                                });
                                         });
             
-
+             $projects = $query->latest();
             $projects = $query->paginate(5);
 
                     return view('projects.index', [
@@ -79,7 +79,7 @@ class ProjectController extends Controller
 
     public function showEditProjectPage(Project $project)
     {
-        $project->load(['adviser', 'area', 'authors']);
+        $project->load(['adviser', 'area', 'authors','panel','chair_panel']);
 
         $faculty = User::where('user_role', User::USER_TYPE_ADVISER)
                        ->orderBy('lastname')
@@ -92,7 +92,7 @@ class ProjectController extends Controller
 
         $areas    = Area::orderBy('name')->get();
         $students = User::ofType(User::USER_TYPE_STUDENT)->get();
-
+ 
         return view('projects.edit', [
             'project'  => $project,
             'faculty'  => $faculty,
@@ -174,7 +174,7 @@ class ProjectController extends Controller
 
             $project->uploaded_file_path = $request->file('file')->store($request->user()->id, 'public');
 
-            dd($request->file('file'));
+            ($request->file('file'));
 
             $project->save();
             $project->panel()->attach($request->input('panel_ids'));

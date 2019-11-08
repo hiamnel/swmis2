@@ -99,7 +99,7 @@
                                         <a href="{{ url($project->getPreviewLink()) }}" target="_blank" class="mr-3">Preview</a>
                                     </td>
                                     <td>
-                                        {{ $project->date_submitted }}
+                                        {{ date_create_immutable($project->date_submitted)->format('F Y') }}
                                     </td>
                                     <td>
                                         <ol class="pl-3">

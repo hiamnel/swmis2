@@ -32,7 +32,7 @@ class ReportsController extends \App\Http\Controllers\Adviser\ReportsController
                             ->get();
         }
 
-        return $this->formatData($projects);
+        return $this->formatData($projects, $request);
     }
 
     
