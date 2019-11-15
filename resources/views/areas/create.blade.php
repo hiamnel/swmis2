@@ -26,7 +26,7 @@
                         </div>
 
                         <div class="text-center">
-                            <button type="submit" class="btn btn-success btn-lg px-5">Register</button>
+                            <button type="submit" class="btn btn-success btn-lg px-5">Submit</button>
                         </div>
                     </form>
                 </div>

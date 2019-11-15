@@ -14,10 +14,19 @@
                         </div>
                     </div>
                 @endif
+                
                 <div class="card-header d-flex align-items-center justify-content-between">
                     List of all advisers
-                    <a class="btn btn-success px-3" href="{{ url('advisers/create') }}">Create new adviser</a>
+                    <form class="form-inline" method="get">
+                    <div class="form-group ml-2">
+                        <label class="mr-2">Teacher</label>
+                        <input type="text" name="adviser" class="form-control" value="{{ request('adviser') }}">
+                    </div>
+                    <button type="submit" class="btn btn-secondary ml-2">Search</button>
+                    </form>
+                    <a class="btn btn-success px-3" href="{{ url('advisers/create') }}">Create new teacher</a>
                 </div>
+
                 <div class="card-body p-0">
                     <table class="table mb-0 table-hover table-striped">
                         <thead>
@@ -26,7 +35,8 @@
                                 <th>Last Name</th>
                                 <th>First Name</th>
                                 <th>M.I</th>
-                                <th>Title</th>
+                                <th>Educational Attainment</th>
+                                <th>Role</th>
                                 <th>Username</th>
                                 <th></th>
                                 <th></th>
@@ -40,13 +50,15 @@
                                     <td>{{ $adviser->firstname }}</td>
                                     <td>{{ $adviser->middle_initial }}</td>
                                     <td>{{ $adviser->title }}</td>
+                                    <td>{{ $adviser->user_role }}</td>
                                     <td>{{ $adviser->username }}</td>
                                     <td> <a class="btn btn-success px-3" href="{{ url("advisers/{$adviser->id}/edit") }}" class="mr-2">Edit</a></td>
-                                        <td> <form class="delete-form" action="{{ url("advisers/{$adviser->id}/delete") }}">
+                                        <td> @if(count($adviser->handledProjects) < 1)<form class="delete-form" action="{{ url("advisers/{$adviser->id}/delete") }}">
                                             {{ csrf_field() }}
                                             <a class="btn btn-danger px-3" href="#" onclick="confirmDelete(this)" class="text-danger">Delete
                                             </a>
                                         </form>
+                                            @endif
                                         </td>
                                     </td>
                                 </tr>

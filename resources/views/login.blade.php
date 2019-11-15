@@ -6,7 +6,7 @@
         <div class="col-md-6 offset-md-3">
             <div class="card">
                 <div class="card-header text-center text-uppercase font-weight-bold">
-                    Student Work Management System  
+                    Student Work Information Management System  
                 </div>
                 <div class="card-body">
                     <h5 class="card-title mb-4 text-center">Please input credentials</h5>

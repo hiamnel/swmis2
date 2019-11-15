@@ -39,6 +39,16 @@
                                     <label class="mr-2">Title</label>
                                     <input type="text" name="title" class="form-control" value="{{ request('title') }}">
                                 </div>
+                                <div class="form-group ml-2">
+                                        <label class="mr-2">Call Number</label>
+                                        <select name="call_number" id="" class="form-control">
+                                            <option value=""></option>
+                                            <option value="with_call_number" {{ request('call_number') === 'with_call_number' ? 'selected' : '' }}>With Call Number</option>
+                                            <option value="without_call_number" {{ request('call_number') === 'without_call_number' ? 'selected' : '' }}>
+                                                Without Call Number
+                                            </option>
+                                        </select>
+                                    </div>
                                 @if(Auth::user()->isRole(\App\User::USER_TYPE_ADVISER))
                                     <div class="form-group ml-2">
                                         <label class="mr-2">Status</label>
@@ -53,6 +63,7 @@
                                             </option>
                                         </select>
                                     </div>
+                                    
                                 @endif
                                 @if(Auth::user()->isRole(\App\User::USER_TYPE_ADMIN))
                                     <div class="form-group ml-2">
@@ -79,13 +90,12 @@
                             <tr class="bg-primary text-white">
                                 <th></th>
                                 <th>Project Title</th>
-                                <th>Date Submitted</th>
+                                <th>Defense Date</th>
                                 <th>Authors</th>
                                 <th>Panelist</th>
                                 <th>Adviser</th>
                                 <th>Subject Area</th>
                                 <th>Call Number</th>
-                                <th></th>
                                 <th></th>
                             </tr>
                             </thead>
@@ -108,12 +118,12 @@
                                     </td>
                                     <td>
                                         <ol class="pl-3">
-                                            <li>{!! $project->panel->implode('fullname', '</li><li>') !!}</li>
+                                            <li>{!! isset($project->panel) ? $project->panel->implode('fullname', '</li><li>') : '' !!}</li>
                                         </ol>
                                     </td>
-                                    <td>{{ $project->adviser->fullname }}</td>
-                                    <td>{{ $project->area->name }}</td>
-                                    <td>{{ $project->call_number ?: 'N/A' }}</td>
+                                    <td>{{ isset($project->adviser) ? $project->adviser->fullname : '' }}</td>
+                                    <td>{{ isset($project->area) ? $project->area->name : ''}}</td>
+                                    <td>{{ $project->call_number ? $project->call_number : 'N/A' }}</td>
                                     <td>
                                         @if($project->is('pending'))
                                             <span class="d-block badge badge-secondary text-white mb-3">PENDING</span>
@@ -140,9 +150,16 @@
                                                     @csrf
                                                     @method('delete')
                                                 </form>
+                                            @elseif(Auth::user()->isRole('admin'))
+                                            <form method="post" action="{{ url("projects/{$project->id}") }}"
+                                                      onsubmit="javascript: return confirm('Are you sure?')">
+                                                    <button type="submit" class="btn btn-danger  btn-block">Delete
+                                                    </button>
+                                                    @csrf
+                                                    @method('delete')
+                                                </form> 
                                             @endif
                                         @endif
-
                                     </td>
                                 </tr>
                             @empty

@@ -47,19 +47,19 @@ class ReportsController extends Controller
 
     protected function prepareData(Request $request)
     {
-
-        if ($request->role == 'Adviser') {
+        if ($request->role == 'Panel') {
+            $projects = Project::whereHas('project_panel', function($q){
+                $q->where(['panel_id' => Auth::user()->id, 'project_status' => 'approved']);
+            })->get();
+            
+        } else {
             /** @var Collection $projects */
             $projects = Auth::user()->handledProjects()
                         ->whereNotNull('date_submitted')
                         ->where('project_status', '=', 'approved')
                         ->get();
-        } else {
-            $projects = Project::whereHas('project_panel', function($q){
-                $q->where(['panel_id' => Auth::user()->id]);
-            })->get();
         }
-
+        
         return $this->formatData($projects, $request);
     }
 
@@ -72,25 +72,39 @@ class ReportsController extends Controller
         $yearRange  = isset($request) && $request->from_year && $request->to_year ? range($request->from_year, $request->to_year) : range($currentYear, $currentYear - 4, -1);
 
         foreach ($yearRange as $year) {
-            $firstSem  = Project::determinePeriod($year, 1);
-            $secondSem = Project::determinePeriod($year, 2);
- 
             $data->put($year, [
-                '1' => $projects->filter(function (Project $project) use ($firstSem) {
-                    return Carbon::parse($project->date_submitted)->between(
-                        Carbon::parse($firstSem[0]),
-                        Carbon::parse($firstSem[1]),
-                        true
-                    );
+                '1' => $projects->filter(function (Project $project) use ($year) {
+                    return $project->academic_year == $year && $project->semester == 1;
                 })->count(),
-                '2' => $projects->filter(function (Project $project) use ($secondSem) {
-                    return Carbon::parse($project->date_submitted)->between(
-                        Carbon::parse($secondSem[0]),
-                        Carbon::parse($secondSem[1]),
-                        true
-                    );
+                '2' => $projects->filter(function (Project $project) use ($year) {
+                    return $project->academic_year == $year && $project->semester == 2;
+                })->count(),
+                '3' => $projects->filter(function (Project $project) use ($year) {
+                    return $project->academic_year == $year && $project->semester == 3;
+                })->count(),
+                '4' => $projects->filter(function (Project $project) use ($year) {
+                    return $project->academic_year == $year && $project->semester == 4;
                 })->count()
             ]);
+            //$firstSem  = Project::determinePeriod($year, 1);
+            //$secondSem = Project::determinePeriod($year, 2);
+ 
+            // $data->put($year, [
+            //     '1' => $projects->filter(function (Project $project) use ($firstSem) {
+            //         return Carbon::parse($project->date_submitted)->between(
+            //             Carbon::parse($firstSem[0]),
+            //             Carbon::parse($firstSem[1]),
+            //             true
+            //         );
+            //     })->count(),
+            //     '2' => $projects->filter(function (Project $project) use ($secondSem) {
+            //         return Carbon::parse($project->date_submitted)->between(
+            //             Carbon::parse($secondSem[0]),
+            //             Carbon::parse($secondSem[1]),
+            //             true
+            //         );
+            //     })->count()
+            // ]);
         }
 
         return $data;
@@ -105,11 +119,11 @@ class ReportsController extends Controller
 
         $isAdviser = Auth::user()->isRole('adviser');
         if ($year && $sem) {
-            $semester  = Project::determinePeriod($year, $sem);
+            //$semester  = Project::determinePeriod($year, $sem);
 
             $query = Project::query();
 
-            $query->whereNotNull('date_submitted')->where(['project_status' => 'approved']);
+            $query->whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved']);
 
             if ($isAdviser) {
                 if ($role == 'Adviser') {
@@ -123,15 +137,15 @@ class ReportsController extends Controller
                 $query->where(['adviser_id' => $adviserId]);
             } 
 
-            $projects = $query->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
+            $results = $query->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
 
-            $results = $projects->filter(function (Project $project) use ($semester) {
-                    return Carbon::parse($project->date_submitted)->between(
-                        Carbon::parse($semester[0]),
-                        Carbon::parse($semester[1]),
-                        true
-                    );
-            });
+            // $results = $projects->filter(function (Project $project) use ($semester) {
+            //         return Carbon::parse($project->date_submitted)->between(
+            //             Carbon::parse($semester[0]),
+            //             Carbon::parse($semester[1]),
+            //             true
+            //         );
+            // });
 
             return response()->json(['results' => $results, 'isAdviser' => $isAdviser]);
         }

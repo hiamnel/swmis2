@@ -29,6 +29,15 @@ class HandledProjectsController extends Controller
                     ->when(in_array($request->input('status'), ['pending', 'approved']),
                         function (Builder $query) use ($request) {
                             return $query->where('project_status', '=', $request->input('status'));
+                        })
+                    ->when(in_array($request->input('call_number'), ['with_call_number', 'without_call_number']),
+                        function (Builder $query) use ($request) {
+                            if ($request->input('call_number') == 'with_call_number') {
+                                return $query->whereNotNull('call_number');
+                            } else if ($request->input('call_number') == 'without_call_number') {
+                                return $query->whereNull('call_number');
+                            }
+                            
                         });
 
 //        if ($validator->passes()) {

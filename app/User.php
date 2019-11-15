@@ -13,6 +13,7 @@ class User extends Authenticatable
     const USER_TYPE_ADMIN = 'admin';
     const USER_TYPE_STUDENT = 'student';
     const USER_TYPE_ADVISER = 'adviser';
+    const USER_TYPE_FACULTY = 'faculty';
 
     const USER_DEFAULT_PASSWORRD = 'usc2018!*';
 
@@ -70,6 +71,10 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Project::class, 'project_authors', 'author_id', 'project_id');
     }
+
+    public function relatedProjects() {
+    return $this->hasMany('App\Project', 'adviser_id');
+}
 
     public function handledProjects()
     {

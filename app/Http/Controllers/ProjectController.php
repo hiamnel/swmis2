@@ -24,7 +24,8 @@ class ProjectController extends Controller
 //            'academic_year' => 'sometimes|required|date_format:Y',
 //            'semester'      => 'sometimes|nullable|in:1,2',
             'title'      => 'sometimes|nullable|string',
-            'adviser_id' => 'sometimes|nullable|int'
+            'adviser_id' => 'sometimes|nullable|int',
+            'call_number' => 'sometimes|nullable|string'
         ]);
         // echo Auth::user()->isRole(User::USER_TYPE_ADMIN);
         // if(Auth::user() == NULL){
@@ -42,7 +43,15 @@ class ProjectController extends Controller
                                                            ->when((($adviserId = request('adviser_id')) && $validator->passes()),
                                                                function (Builder $query) use ($adviserId) {
                                                                    return $query->where('adviser_id', '=', $adviserId);
-                                                               });
+                                                               })->when((($callNumber = request('call_number')) && $validator->passes()),
+                                                            function (Builder $query) use ($callNumber) {
+                                                                if ($callNumber == 'with_call_number') {
+                                                                    return $query->whereNotNull('call_number');
+                                                                } else if ($callNumber == 'without_call_number') {
+                                                                    return $query->whereNull('call_number');
+                                                                }
+                                                                
+                                                            });
                                         });
             
              $projects = $query->latest();
@@ -81,12 +90,11 @@ class ProjectController extends Controller
     {
         $project->load(['adviser', 'area', 'authors','panel','chair_panel']);
 
-        $faculty = User::where('user_role', User::USER_TYPE_ADVISER)
+        $faculty = User::where('user_role', User::USER_TYPE_FACULTY)
                        ->orderBy('lastname')
                        ->get();
 
         $advisers = User::where('user_role', User::USER_TYPE_ADVISER)
-                        ->whereNotNull('title')
                        ->orderBy('lastname')
                        ->get();
 
@@ -104,12 +112,11 @@ class ProjectController extends Controller
 
     public function showCreateProjectPage()
     {
-        $faculty = User::where('user_role', User::USER_TYPE_ADVISER)
+        $faculty = User::where('user_role', User::USER_TYPE_FACULTY)
                        ->orderBy('lastname')
                        ->get();
 
         $advisers = User::where('user_role', User::USER_TYPE_ADVISER)
-                        ->whereNotNull('title')
                        ->orderBy('lastname')
                        ->get();
 
@@ -126,21 +133,28 @@ class ProjectController extends Controller
 
     public function doCreateProject(Request $request)
     {
+        $selectedAdvisers = $request->input('panel_ids', []);
+        $selectedAdvisers[] = $request->input('chair_panel_id');
+        $selectedPanels = $request->input('panel_ids', []);
+        $selectedPanels[] = $request->input('adviser_id');
+
         $rules = [
             'doi'            => 'nullable|string',
             'title'          => 'required|string',
             'author_ids'     => 'required|array',
             'author_ids.*'   => 'required|exists:users,id|distinct',
             'abstract'       => 'required|string',
-            'adviser_id'     => ['required', 'exists:users,id', Rule::notIn($request->input('panel_ids', []))],
-            'chair_panel_id' => ['required', 'exists:users,id', Rule::notIn($request->input('panel_ids', []))],
+            'adviser_id'     => ['required', 'exists:users,id', Rule::notIn($selectedAdvisers)],
+            'chair_panel_id' => ['required', 'exists:users,id', Rule::notIn($selectedPanels)],
             'area_id'        => 'required|exists:areas,id',
             'panel_ids'      => 'required|array',
             'panel_ids.*'    => 'required|exists:users,id|distinct',
             'keywords'       => 'required|string',
             'pages'          => 'required|integer',
-            'year_published' => 'required|date_format:Y',
+            'academic_year'  => 'required|date_format:Y',
             'file'           => 'required|mimes:pdf',
+            'semester'       => 'required',
+            'work_type'      => 'required'
         ];
 
         if (Auth::user()->isRole(User::USER_TYPE_ADMIN)) {
@@ -164,7 +178,9 @@ class ProjectController extends Controller
             $project->area_id        = $request->input('area_id');
             $project->keywords       = $request->input('keywords');
             $project->pages          = $request->input('pages');
-            $project->year_published = $request->input('year_published');
+            $project->academic_year = $request->input('academic_year');
+            $project->semester      = $request->input('semester');
+            $project->work_type     = $request->input('work_type');
 
             if (Auth::user()->isRole(User::USER_TYPE_ADMIN)) {
                 $project->call_number    = $request->input('call_number');
@@ -202,21 +218,28 @@ class ProjectController extends Controller
             return redirect()->back();
         }
 
+        $selectedAdvisers = $request->input('panel_ids', []);
+        $selectedAdvisers[] = $request->input('chair_panel_id');
+        $selectedPanels = $request->input('panel_ids', []);
+        $selectedPanels[] = $request->input('adviser_id');
+
         $rules = [
             'doi'            => 'nullable|string',
             'title'          => 'required|string',
             'author_ids'     => 'required|array',
             'author_ids.*'   => 'required|exists:users,id|distinct',
             'abstract'       => 'required|string',
-            'adviser_id'     => 'required|exists:users,id',
-            'chair_panel_id' => 'required|exists:users,id',
+            'adviser_id'     => ['required', 'exists:users,id', Rule::notIn($selectedAdvisers)],
+            'chair_panel_id' => ['required', 'exists:users,id', Rule::notIn($selectedPanels)],
             'area_id'        => 'required|exists:areas,id',
             'panel_ids'      => 'required|array',
             'panel_ids.*'    => 'required|exists:users,id|distinct',
             'keywords'       => 'required|string',
             'pages'          => 'required|integer',
-            'year_published' => 'required|date_format:Y',
+            'academic_year' => 'required|date_format:Y',
             'file'           => 'nullable|mimes:pdf',
+            'semester'       => 'required',
+            'work_type'      => 'required'
         ];
 
         if (Auth::user()->isRole(User::USER_TYPE_ADMIN)) {
@@ -237,7 +260,9 @@ class ProjectController extends Controller
             $project->area_id        = $request->input('area_id');
             $project->keywords       = $request->input('keywords');
             $project->pages          = $request->input('pages');
-            $project->year_published = $request->input('year_published');
+            $project->academic_year = $request->input('academic_year');
+            $project->semester      = $request->input('semester');
+            $project->work_type     = $request->input('work_type');
 
             if (Auth::user()->isRole(User::USER_TYPE_ADMIN)) {
                 $project->call_number    = $request->input('call_number');

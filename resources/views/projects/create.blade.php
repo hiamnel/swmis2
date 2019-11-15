@@ -76,29 +76,29 @@
                             @if(Auth::user()->isRole('admin'))
                             <div class="col-sm-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Call #</label>
+                                    <label class="col-sm-3 col-form-label"><font color="red"> *</font>Call #</label>
                                     <div class="col-sm-9">
-                                        <input type="text" class="form-control" name="call_number" value="{{ old('call_numberr') }}" placeholder="Enter Call Number">
+                                        <input type="text" class="form-control" name="call_number" value="{{ old('call_number') }}" placeholder="Enter Call Number">
                                     </div>
                                 </div>
                             </div>
+                            @endif
                             <div class="col-sm-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-5 col-form-label">Date Submitted</label>
+                                    <label class="col-sm-5 col-form-label"><font color="red"> *</font>Defense Date</label>
                                     <div class="col-sm-7">
                                         <input type="date" class="form-control" name="date_submitted" value="{{ old('date_submitted') }}">
                                     </div>
                                 </div>
                             </div>
-                            @endif
                         </div>
                         <div class="form-group row">
                             <label class="col-sm-2 col-form-label"><font color="red"> *</font>Chair Panel</label>
                             <div class="col-sm-10">
-                                <select name="chair_panel_id" class="form-control select2" data-allow-clear="true">
-                                    <option disabled>SELECT YOUR CHAIR PANEL</option>
-                                    @foreach($faculty AS $panel)
-                                        <option value="{{ $panel->id }}" {{ in_array($panel->id, (array)old('panel_ids')) ? 'selected="selected"' : '' }}>{{ $panel->fullname }}</option>
+                                <select name="chair_panel_id" class="form-control select2">
+                                    <option disabled selected>SELECT YOUR CHAIR PANEL</option>
+                                    @foreach($advisers AS $adviser)
+                                        <option value="{{ $adviser->id }}" {{ old('chair_panel_id') == $adviser->id ? 'selected' : '' }}>{{ $adviser->fullname }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -132,15 +132,43 @@
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-5 col-form-label"><font color="red"> *</font>Year Published</label>
+                                    <label class="col-sm-5 col-form-label"><font color="red"> *</font>Semester</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" name="year_published" value="{{ old('year_published') }}" placeholder="Year">
+                                        <select name="semester" class="form-control" id="select2-ajax-main">
+                                            <option value=""></option>
+                                            <option value="1" {{ old('semester') == '1' ? 'selected="selected"' : '' }}>1st Semester</option>
+                                            <option value="2" {{ old('semester') == '2' ? 'selected="selected"' : '' }}>2nd Semester</option>
+                                            <option value="3" {{ old('semester') == '3' ? 'selected="selected"' : '' }}>Summer</option>  
+                                            <option value="4" {{ old('semester') == '4' ? 'selected="selected"' : '' }}>Tri-sem</option>    
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-4 col-form-label">Upload file</label>
+                                    <label class="col-sm-5 col-form-label"><font color="red"> *</font>Academic Year</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" name="academic_year" value="{{ old('academic_year') }}" placeholder="Year">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-6 col-form-label"><font color="red"> *</font>Work Type</label>
+                                    <div class="col-sm-6">
+                                        <select name="work_type" class="form-control" id="select2-ajax-main">
+                                            <option value=""></option>
+                                            <option value="Thesis" {{ old('work_type') == 'Thesis' ? 'selected="selected"' : '' }}>Thesis</option>
+                                            <option value="Capstone" {{ old('work_type') == 'Capstone' ? 'selected="selected"' : '' }}>Capstone</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-5">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Upload PDF file</label>
                                     <div class="col-sm-8">
                                         <input type="file" name="file" value="{{ old('date_submitted') }}">
                                     </div>

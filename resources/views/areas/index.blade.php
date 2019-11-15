@@ -35,11 +35,11 @@
                                     <td>{{ $area->name }}</td>
                                     <td> <a class="btn btn-success px-3" href="{{ url("areas/{$area->id}/edit") }}" class="mr-2">Edit</a></td>
 
-                                        <td> <form class="delete-form" action="{{ url("areas/{$area->id}/delete") }}">
+                                        <td> @if(count($area->projects) < 1)<form class="delete-form" action="{{ url("areas/{$area->id}/delete") }}">
                                             {{ csrf_field() }}
                                             <a class="btn btn-danger px-3" href="#" onclick="confirmDelete(this)" class="text-danger">Delete
                                             </a>
-                                        </form>
+                                        </form> @endif
                                         </td>
                                     </td>
                                 </tr>

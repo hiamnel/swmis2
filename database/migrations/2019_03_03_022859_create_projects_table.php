@@ -24,8 +24,10 @@ class CreateProjectsTable extends Migration
             $table->string('call_number')->nullable();
             $table->date('date_submitted')->nullable();
             $table->text('keywords');
+            $table->text('work_type');
             $table->unsignedInteger('pages');
-            $table->year('year_published');
+            $table->year('academic_year');
+            $table->unsignedInteger('semester');
             $table->string('uploaded_file_path');
             $table->timestamps();
 

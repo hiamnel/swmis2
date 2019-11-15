@@ -12,4 +12,10 @@ class Area extends Model
     protected $fillable = [
         'name'
     ];
+
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
+    }
+
 }

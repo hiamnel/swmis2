@@ -47,7 +47,20 @@
                                     {!! $project->authors->pluck('fullname')->implode('</span><span class="badge badge-secondary mr-1 text-white"><i class="fas fa-user fa-fw"></i>') !!}
                                 </span>
                             </dd>
-                            
+                            <dt class="col-md-2">Chair Panel</dt>
+                            <dd class="col-md-10">
+                                <span class="badge badge-secondary text-white mr-1">
+                                    <i class="fas fa-user fa-fw"></i>
+                                    {!! $project->chair_panel->fullname !!}
+                                </span>
+                            </dd>
+                            <dt class="col-md-2">Panel Members</dt>
+                            <dd class="col-md-10">
+                                <span class="badge badge-secondary text-white mr-1">
+                                    <i class="fas fa-user fa-fw"></i>
+                                    {!! $project->panel->pluck('fullname')->implode('</span><span class="badge badge-secondary mr-1 text-white"><i class="fas fa-user fa-fw"></i>') !!}
+                                </span>
+                            </dd>
                             <dt class="col-md-2">Abstract</dt>
                             <dd class="col-md-10">
                                 {{ $project->abstract }}
@@ -61,6 +74,18 @@
                             <dt class="col-md-2">Area</dt>
                             <dd class="col-md-10">
                                 {{ $project->area->name }}
+                            </dd>
+                            <dt class="col-md-2">Semester</dt>
+                            <dd class="col-md-10">
+                                {{ $project->semester == 1 ? '1st' : ($project->semester == 2 ? '2nd' : 'Summer') }}
+                            </dd>
+                            <dt class="col-md-2">Academic Year</dt>
+                            <dd class="col-md-10">
+                                {{ $project->academic_year }}
+                            </dd>
+                            <dt class="col-md-2">Work Type</dt>
+                            <dd class="col-md-10">
+                                {{ $project->work_type }}
                             </dd>
                             <dt class="col-md-2">Keywords</dt>
                             <dd class="col-md-10">
@@ -113,4 +138,4 @@
         });
     })
 </script>
-@endpush
+@endpush    

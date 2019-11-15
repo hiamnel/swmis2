@@ -38,9 +38,11 @@ class Project extends Model
         'date_submitted',
         'keywords',
         'pages',
-        'year_published',
+        'academic_year',
+        'semester',
         'uploaded_file_path',
-        'project_status'
+        'project_status',
+        'work_type'
     ];
 
     protected $appends = [

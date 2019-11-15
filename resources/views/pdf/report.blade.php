@@ -84,7 +84,7 @@
 	                      <th>Panelist</th>
 	                      <th>Adviser</th>
 	                      <th>Subject Area</th>
-	                      <th>Date</th>
+	                      <th>Defens Date</th>
 	                      <th>Call Number</th>
 	                  	</tr>
                   	@endif

@@ -30,13 +30,13 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Project Title</label>
+                            <label class="col-sm-2 col-form-label"><font color="red"> *</font>Project Title</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" name="title" value="{{ old('title', $project->title) }}" placeholder="Title">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Author(s)</label>
+                            <label class="col-sm-2 col-form-label"><font color="red"> *</font>Author(s)</label>
                             <div class="col-sm-10">
                                 <select name="author_ids[]" class="form-control select2" multiple data-maximum-selection-length="3" data-allow-clear="true">
                                     <option disabled>SELECT AUTHOR(S)</option>
@@ -47,13 +47,13 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Abstract</label>
+                            <label class="col-sm-2 col-form-label"><font color="red"> *</font>Abstract</label>
                             <div class="col-sm-10">
                                 <textarea name="abstract" id="abstract" rows="5" class="form-control">{{ old('abstract', $project->abstract) }}</textarea>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Adviser</label>
+                            <label class="col-sm-2 col-form-label"><font color="red"> *</font>Adviser</label>
                             <div class="col-sm-10">
                                 <select name="adviser_id" class="form-control select2">
                                     <option disabled selected>SELECT YOUR ADVISER</option>
@@ -68,14 +68,14 @@
                             <div class="col-sm-10">
                                 <select name="chair_panel_id" class="form-control select2" data-allow-clear="true">
                                     <option disabled>SELECT YOUR CHAIR PANEL</option>
-                                    @foreach($faculty AS $panel)
-                                        <option value="{{ $panel->id }}" {{ old('chair_panel_id', $project->chair_panel_id) == $panel->id ? 'selected' : '' }}>{{ $panel->fullname }}</option>
+                                    @foreach($advisers AS $adviser)
+                                        <option value="{{ $adviser->id }}" {{ old('chair_panel_id', $project->chair_panel_id) == $adviser->id ? 'selected' : '' }}>{{ $adviser->fullname }}</option>
                                     @endforeach
                                 </select>
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Panel</label>
+                            <label class="col-sm-2 col-form-label"><font color="red"> *</font>Panel</label>
                             <div class="col-sm-10">
                                 <select name="panel_ids[]" class="form-control select2 panel-ids" multiple data-maximum-selection-length="3" data-allow-clear="true">
                                     <option disabled>SELECT YOUR PANEL MEMBERS</option>
@@ -88,7 +88,7 @@
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-6 col-form-label">Area</label>
+                                    <label class="col-sm-6 col-form-label"><font color="red"> *</font>Area</label>
                                     <div class="col-sm-6">
                                         <select name="area_id" class="form-control select2">
                                             <option disabled selected>SELECT AN AREA</option>
@@ -102,24 +102,24 @@
                             @if(Auth::user()->isRole('admin'))
                             <div class="col-sm-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-3 col-form-label">Call #</label>
+                                    <label class="col-sm-3 col-form-label"><font color="red"> *</font>Call #</label>
                                     <div class="col-sm-9">
                                         <input type="text" class="form-control" name="call_number" value="{{ old('call_number', $project->call_number) }}" placeholder="Enter Call Number">
                                     </div>
                                 </div>
                             </div>
+                               @endif
                             <div class="col-sm-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-5 col-form-label">Date Submitted</label>
+                                    <label class="col-sm-5 col-form-label"><font color="red"> *</font>Defense Date</label>
                                     <div class="col-sm-7">
                                         <input type="date" class="form-control" name="date_submitted" value="{{ old('date_submitted', $project->date_submitted) }}">
                                     </div>
                                 </div>
                             </div>
-                            @endif
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-2 col-form-label">Keyword(s)</label>
+                            <label class="col-sm-2 col-form-label"><font color="red"> *</font>Keyword(s)</label>
                             <div class="col-sm-10">
                                 <input type="text" class="form-control" name="keywords" value="{{ old('keywords', $project->keywords) }}" placeholder="Title">
                                 <span class="form-text text-muted">Separate each words by commas. (management, digital repository, archiving)</span>
@@ -128,7 +128,7 @@
                         <div class="row">
                             <div class="col-sm-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-6 col-form-label">Page(s)</label>
+                                    <label class="col-sm-6 col-form-label"><font color="red"> *</font>Page(s)</label>
                                     <div class="col-sm-6">
                                         <input type="number" class="form-control" name="pages" value="{{ old('pages', $project->pages) }}" placeholder="No. of page(s)">
                                     </div>
@@ -136,21 +136,67 @@
                             </div>
                             <div class="col-sm-4">
                                 <div class="form-group row">
-                                    <label class="col-sm-5 col-form-label">Year Published</label>
+                                    <label class="col-sm-5 col-form-label"><font color="red"> *</font>Semester</label>
                                     <div class="col-sm-7">
-                                        <input type="text" class="form-control" name="year_published" value="{{ old('year_published', $project->year_published) }}" placeholder="Year">
+                                        <select name="semester" class="form-control" id="select2-ajax-main" value="{{ old('semester') }}">
+                                            <option value=""></option>
+                                            <option value="1" {{ old('semester', $project->semester) == '1' ? 'selected="selected"' : '' }}>1st Semester</option>
+                                            <option value="2" {{ old('semester', $project->semester) == '2' ? 'selected="selected"' : '' }}>2nd Semester</option>
+                                            <option value="3" {{ old('semester', $project->semester) == '3' ? 'selected="selected"' : '' }}>Summer</option>   
+                                            <option value="4" {{ old('semester', $project->semester) == '4' ? 'selected="selected"' : '' }}>Tri-sem</option>   
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-5 col-form-label"><font color="red"> *</font>Academic Year</label>
+                                    <div class="col-sm-7">
+                                        <input type="text" class="form-control" name="academic_year" value="{{ old('academic_year', $project->academic_year) }}" placeholder="Year">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-6 col-form-label"><font color="red"> *</font>Work Type</label>
+                                    <div class="col-sm-6">
+                                        <select name="work_type" class="form-control" id="select2-ajax-main">
+                                            <option value=""></option>
+                                            <option value="Thesis" {{ old('work_type', $project->work_type) == 'Thesis' ? 'selected="selected"' : '' }}>Thesis</option>
+                                            <option value="Capstone" {{ old('work_type', $project->work_type) == 'Capstone' ? 'selected="selected"' : '' }}>Capstone</option>
+                                        </select>
                                     </div>
                                 </div>
                             </div>
                             @if(!Auth::user()->isRole('adviser'))
-                                <div class="col-sm-4">
-                                    <div class="form-group row">
-                                        <label class="col-sm-4 col-form-label">Upload file</label>
-                                        <div class="col-sm-8">
-                                            <input type="file" name="file">
+                            <div class="col-sm-4">
+                                <div class="form-group row">
+                                    <label class="col-sm-4 col-form-label">Upload file</label>
+                                    <div class="col-sm-8">
+                                        <input type="file" name="file">
+                                    </div>
+                                </div>
+                            </div>
+                           <!--  <div class="col-sm-12">
+                                <div class="card">
+                                    <div class="card-body mt-0">
+                                        <h4 class="card-title">Preview</h4>
+                                        <div class="row">
+                                        @forelse($project->getPreviewsFilePath() as $preview)
+                                            <div class="col-3 text-center">
+                                                <a data-fancybox="gallery" href="{{ $preview }}">
+                                                    <img class="img-fluid border rounded mx-auto" src="{{ $preview }}" alt="{{ $project->title }} preview page {{ $loop->iteration }}" >
+                                                </a>
+                                            </div>
+                                        @empty
+                                            No resource
+                                        @endforelse
                                         </div>
                                     </div>
                                 </div>
+                            </div> -->
                             @endif
                         </div>
                         <div class="text-right mt-3">

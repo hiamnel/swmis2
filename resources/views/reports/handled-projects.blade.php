@@ -70,7 +70,7 @@
                               <input type="hidden" name="semester">
                               <input type="hidden" name="role">
                               <input type="hidden" name="adviserId">
-                              <input type="hidden" name="test">
+                             
                               <div class="text-right"><button type="submit" class="btn btn-primary text-right">Print</button>
                               </div>
                           </form>
@@ -84,7 +84,7 @@
                                   <th>Panelist</th>
                                   <th>Adviser</th>
                                   <th>Subject Area</th>
-                                  <th>Date</th>
+                                  <th>Defens Date</th>
                                   <th>Call Number</th>
                                   <th></th>
                               </tr>
@@ -125,13 +125,17 @@
 
         var semesterGroup = {
           '1st': [],
-          '2nd': []
+          '2nd': [],
+          'Summer': [],
+          'Tri-sem': []
         };
 
         var result = [];
         for (var year in data) {
           semesterGroup['1st'].push(data[year]['1']);
-          semesterGroup['2nd'].push(data[year]['2'])
+          semesterGroup['2nd'].push(data[year]['2']);
+          semesterGroup['Summer'].push(data[year]['3']);
+          semesterGroup['Tri-sem'].push(data[year]['4']);
         }
 
 
@@ -147,6 +151,14 @@
             label: "2nd Semester",
             backgroundColor: "#dbf2f2",
             data: semesterGroup['2nd']
+          },{
+            label: "Summer",
+            backgroundColor: "#A9A9A9",
+            data: semesterGroup['Summer']
+          },{
+            label: "Tri-sem",
+            backgroundColor: "#000",
+            data: semesterGroup['Tri-sem']
           }]
         };
 
@@ -160,7 +172,6 @@
               if (array.length > 0) {
                 var e =  array[0];
                 var activePoint = myBarChart.getElementAtEvent(evt)[0];
-                 console.log(activePoint);
                 var data = activePoint._chart.data;
                 var semester = activePoint._datasetIndex;
                 var label = data.datasets[semester].label;
@@ -203,14 +214,14 @@
                           panelCount++;
                         });
 
-                        var status = "";
-                        if(result.project_status == 'pending') {
-                          status = "<span class='d-block badge badge-secondary text-white mb-3'>PENDING</span>";
-                        } else if (result.project_status == 'rejected') {
-                          status = "<span class='d-block badge badge-danger text-white mb-3'>REJECTED</span>";
-                        } else {
-                          status = "<span class='d-block badge badge-success text-white mb-3'>APPROVED</span>";
-                        }
+                        // var status = "";
+                        // if(result.project_status == 'pending') {
+                        //   status = "<span class='d-block badge badge-secondary text-white mb-3'>PENDING</span>";
+                        // } else if (result.project_status == 'rejected') {
+                        //   status = "<span class='d-block badge badge-danger text-white mb-3'>REJECTED</span>";
+                        // } else {
+                        //   status = "<span class='d-block badge badge-success text-white mb-3'>APPROVED</span>";
+                        // }
 
                         var actions = "";
                         if (data.isAdviser) {
@@ -221,12 +232,12 @@
                             var editUrl = "projects/" + result.id + "/edit";
                             actions += '<a href="' + editUrl + '" class="btn btn-info btn-block mb-2">Edit</a>';
                           }
-                        } else {
-                          var editUrl = "projects/" + result.id + "/edit";
-                          actions += '<a href="' + editUrl + '" class="btn btn-info btn-block mb-2">Edit</a>';
-                          if(result.project_status == 'pending') {
-                            actions += '<button class="btn btn-danger btn-block">Delete</button>';
-                          }
+                        // } else {
+                        //   var editUrl = "projects/" + result.id + "/edit";
+                        //   actions += '<a href="' + editUrl + '" class="btn btn-info btn-block mb-2">Edit</a>';
+                        //   if(result.project_status == 'pending') {
+                        //     actions += '<button class="btn btn-danger btn-block">Delete</button>';
+                        //   }
                         }
 
                         if (data.isAdviser) {
@@ -241,7 +252,7 @@
                               html += result.adviser.fullname;
                               html += "</td>";
                               html += "<td>";
-                              html += result.area.name;
+                              html += result.area ? result.area.name : '';
                               html += "</td>";
                               html += "<td>";
                               html += result.date_submitted; 
@@ -265,7 +276,7 @@
                               html += result.adviser.fullname;
                               html += "</td>";
                               html += "<td>";
-                              html += result.area.name;
+                              html += result.area ? result.area.name : '';
                               html += "</td>";
                               html += "<td>";
                               html += result.date_submitted;

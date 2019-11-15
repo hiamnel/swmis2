@@ -6,14 +6,27 @@ use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Validation\Validator;
 
 class AdviserController extends Controller
 {
     public function showAdvisersListPage(Request $request)
     {
-        $advisers = User::where('user_role', User::USER_TYPE_ADVISER)
-            ->orderBy('lastname')
-            ->get();
+        $validator = \Validator::make($request->all(), [
+            'adviser'      => 'sometimes|nullable|string'
+        ]);
+
+        $query = User::query();
+        $query->whereIn('user_role', [User::USER_TYPE_ADVISER, User::USER_TYPE_FACULTY]);
+
+        if (($q = request('adviser')) && $validator->passes()) {
+            $query->where(function ($query) use ($q) {
+                    $query->where('firstname', 'like', "%{$q}%")
+                        ->orWhere('lastname', 'like', "%{$q}%");
+            });
+        }
+        $advisers = $query->with('handledProjects')->orderBy('lastname')->get();
 
         return view('advisers.index', [
             'advisers' => $advisers
@@ -48,12 +61,13 @@ class AdviserController extends Controller
         $adviser->lastname       = $request->input('lastname');
         $adviser->middle_initial = $request->input('middle_initial');
         $adviser->title          = $request->input('title');
+        $adviser->user_role      = $request->input('user_role');
         $adviser->username       = $request->input('username');
         $adviser->password       = bcrypt($adviser::USER_DEFAULT_PASSWORRD);
-        $adviser->user_role      = $adviser::USER_TYPE_ADVISER;
+        //$adviser->user_role      = $adviser::USER_TYPE_ADVISER;
         $adviser->save();
 
-        return redirect('advisers')->with('message', 'New adviser created successfully!');
+        return redirect('advisers')->with('message', 'New teacher created successfully!');
     }
 
     public function doUpdateAdviser($id, Request $request)
@@ -70,10 +84,11 @@ class AdviserController extends Controller
         $adviser->lastname = $request->input('lastname');
         $adviser->middle_initial = $request->input('middle_initial');
         $adviser->title = $request->input('title');
-        $adviser->username = $request->input('username');   
+        $adviser->username = $request->input('username');  
+        $adviser->user_role = $request->input('user_role');  
         $adviser->save();
 
-        return redirect('advisers')->with('message', 'Adviser edited successfully!');
+        return redirect('advisers')->with('message', 'Teacher edited successfully!');
     }
 
     public function doDeleteAdviser($id)
@@ -82,6 +97,6 @@ class AdviserController extends Controller
 
         $adviser->delete();
 
-        return redirect('advisers')->with('message', 'Adviser deleted successfully!');
+        return redirect('advisers')->with('message', 'Teacher deleted successfully!');
     }
 }
