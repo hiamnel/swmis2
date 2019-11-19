@@ -70,6 +70,12 @@
                             </li>
                         @endif
 
+                        @if(Auth::user()->isRole('faculty'))
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ url('reports/handled-yearly') }}">Reports</a>
+                            </li>
+                        @endif
+
                     @endif
                 </ul>
 

@@ -2470,7 +2470,7 @@ textarea.form-control.is-invalid {
 
   .form-inline .form-control {
     display: inline-block;
-    width: auto;
+    width: 160px;
     vertical-align: middle;
   }
 
@@ -4703,6 +4703,10 @@ input[type=button].btn-block {
   color: rgba(255, 255, 255, 0.75);
 }
 
+.nav-link:hover{
+  color: #ffff !important;
+  font-weight: bold;
+}
 .navbar-dark .navbar-nav .nav-link.disabled {
   color: rgba(255, 255, 255, 0.25);
 }

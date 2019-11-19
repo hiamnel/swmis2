@@ -15,14 +15,14 @@
                                 @endforeach
                             </select>
                         </div>
-                        <!-- <div class="form-group ml-2">
+                        <div class="form-group ml-2">
                             <label class="mr-2">Academic Year</label>
                             <select name="academic_year" id="" class="form-control">
                                 @foreach(range(date('Y'), 1999, -1) as $year)
                                     <option value="{{ $year }}" {{ request('academic_year', $selectedYear) == $year ? 'selected' : '' }}>{{ $year }}</option>
                                 @endforeach
                             </select>
-                        </div> -->
+                        </div>
                         <!-- <div class="form-group ml-2">
                             <label class="mr-2">Semester</label>
                             <select name="semester" id="" class="form-control">

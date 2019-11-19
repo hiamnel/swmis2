@@ -102,7 +102,7 @@
                              {{ Illuminate\Support\Str::limit($project->abstract, 250) }}
                         </p>
                         <p class="card-text text-muted">
-                            Submitted on: {{ date_create_immutable($project->date_submitted)->format('F Y') }}
+                            Defense Date: {{ date_create_immutable($project->date_submitted)->format('F Y') }}
                         </p>
                     </div>
                 @endforeach

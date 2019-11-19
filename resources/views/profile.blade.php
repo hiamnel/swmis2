@@ -19,17 +19,18 @@
                     @if($alert = session('message'))
                         <div class="alert alert-{{ $alert['type'] }} text-center">{{ $alert['message'] }}</div>
                     @endif
+                    <div class="alert alert-success text-success">All input field with * are required.</div>
                     <form method="post" action="{{ url('profile') }}">
                         @csrf
                         @method('put')
                         <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">First Name</label>
+                            <label class="col-sm-3 col-form-label"><font color="red"> *</font>First Name</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" name="firstname" value="{{ old('firstname', $profile->firstname) }}">
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Last Name</label>
+                            <label class="col-sm-3 col-form-label"><font color="red"> *</font>Last Name</label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" name="lastname" value="{{ old('lastname', $profile->lastname) }}">
                             </div>

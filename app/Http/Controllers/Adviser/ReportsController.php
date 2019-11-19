@@ -48,16 +48,30 @@ class ReportsController extends Controller
     protected function prepareData(Request $request)
     {
         if ($request->role == 'Panel') {
+            // $projects = Project::whereHas('project_panel', function($q){
+            //     $q->where(['panel_id' => Auth::user()->id, 'project_status' => 'approved']);
+            //     })->orWhere(['chair_panel_id' => Auth::user()->id])->get();
+
             $projects = Project::whereHas('project_panel', function($q){
-                $q->where(['panel_id' => Auth::user()->id, 'project_status' => 'approved']);
-            })->get();
-            
+                        $q->orWhere(['panel_id' => Auth::user()->id]);
+                })->whereNotNull('date_submitted')->where(['chair_panel_id' => Auth::user()->id, 'project_status' => 'approved'])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
         } else {
             /** @var Collection $projects */
-            $projects = Auth::user()->handledProjects()
+            if (Auth::user()->user_role == "adviser") {
+                $projects = Auth::user()->handledProjects()
                         ->whereNotNull('date_submitted')
                         ->where('project_status', '=', 'approved')
                         ->get();
+            } else {
+                $projects = Project::whereHas('project_panel', function($q){
+                        $q->orWhere(['panel_id' => Auth::user()->id]);
+                })->whereNotNull('date_submitted')->where(['chair_panel_id' => Auth::user()->id, 'project_status' => 'approved'])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
+                // $projects = Project::whereNotNull('date_submitted')
+                //         ->where('project_status', '=', 'approved')->whereHas('project_panel', function($q){
+                //     $q->where(['panel_id' => Auth::user()->id]);
+                // })->orWhere(['chair_panel_id' => Auth::user()->id])->get();
+            }
+            
         }
         
         return $this->formatData($projects, $request);
@@ -116,28 +130,49 @@ class ReportsController extends Controller
         $year = $request->year;
         $adviserId = $request->adviserId;
         $role = $request->role;
+        $currentRole = Auth::user()->user_role;
 
         $isAdviser = Auth::user()->isRole('adviser');
         if ($year && $sem) {
             //$semester  = Project::determinePeriod($year, $sem);
 
-            $query = Project::query();
-
-            $query->whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved']);
-
             if ($isAdviser) {
                 if ($role == 'Adviser') {
-                    $query->where(['adviser_id' => Auth::user()->id]);
+                    $results = Project::whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved', 'adviser_id' => Auth::user()->id])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
                 } else {
-                    $query->whereHas('project_panel', function($q){
-                        $q->where(['panel_id' => Auth::user()->id]);
-                    });
+                    $results = Project::whereHas('project_panel', function($q){
+                        $q->orWhere(['panel_id' => Auth::user()->id]);
+                })->whereNotNull('date_submitted')->where(['chair_panel_id' => Auth::user()->id, 'semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved'])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
                 }
             } else if (isset($adviserId)) {
-                $query->where(['adviser_id' => $adviserId]);
-            } 
+                $results = Project::whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved','adviser_id' => $adviserId])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
+            } else if ($currentRole == 'faculty') {
+                $results = Project::whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved'])->whereHas('project_panel', function($q){
+                        $q->where(['panel_id' => Auth::user()->id]);
+                    })->orWhere(['chair_panel_id' => Auth::user()->id])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
+            } else {
+                $results = Project::whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved'])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
+            }
 
-            $results = $query->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
+            // $query = Project::query();
+
+            // if ($isAdviser) {
+            //     if ($role == 'Adviser') {
+            //         $query->where(['adviser_id' => Auth::user()->id]);
+            //     } else {
+            //         $query->whereHas('project_panel', function($q){
+            //             $q->orWhere(['panel_id' => Auth::user()->id]);
+            //     })->orWhere(['chair_panel_id' => Auth::user()->id]);
+            //     }
+            // } else if (isset($adviserId)) {
+            //     $query->where(['adviser_id' => $adviserId]);
+            // } else if ($currentRole == 'faculty') {
+            //     $query->whereHas('project_panel', function($q){
+            //             $q->where(['panel_id' => Auth::user()->id]);
+            //         })->orWhere(['chair_panel_id' => Auth::user()->id]);
+            // }
+
+            // $results = $query->whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved'])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
 
             // $results = $projects->filter(function (Project $project) use ($semester) {
             //         return Carbon::parse($project->date_submitted)->between(
@@ -147,7 +182,7 @@ class ReportsController extends Controller
             //         );
             // });
 
-            return response()->json(['results' => $results, 'isAdviser' => $isAdviser]);
+            return response()->json(['results' => $results, 'isAdviser' => $isAdviser, 'currentRole' => $currentRole]);
         }
     }
 }

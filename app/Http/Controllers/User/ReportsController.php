@@ -19,30 +19,38 @@ class ReportsController extends Controller
         $data     = collect();
 
         if ($projectId = $request->input('project_id', null)) {
-            $data = $this->getData($projectId, $period['period']);
+            $data = $this->getData($projectId, $period['period'], $period['selectedYear']);
         }
 
 
         return view('reports.monthly-view', array_merge($period, compact('projects', 'data')));
     }
 
-    protected function getData(int $projectId, array $period)
+    protected function getData(int $projectId, array $period, $year)
     {
         $result = collect();
+
+        $startOfSem = Carbon::parse('first day of January ' . $year);
+        $start  = $startOfSem->format('Y-m-d');
+        $endOfSem   = Carbon::parse('last day of December ' . $year);
+        $end = $endOfSem->format('Y-m-d');
 
         /** @var Collection $data */
         $data = \DB::table((new ProjectTraffic())->getTable())
                    ->selectRaw('COUNT(DISTINCT user_id) as visitors, MONTH(created_at) as month')
                    ->where('project_id', $projectId)
-                   ->whereRaw("DATE(created_at) BETWEEN '{$period[0]}' AND '{$period[1]}'")
+                   ->whereRaw("DATE(created_at) BETWEEN '{$start}' AND '{$end}'")
                    ->groupBy(\DB::raw('MONTH(created_at)'))
                    ->orderBy('month')
                    ->get()
                    ->pluck('visitors', 'month');
 
-        $startOfSem = Carbon::parse($period[0]);
-        $endOfSem   = Carbon::parse($period[1]);
+        // $startOfSem = Carbon::parse($period[0]);
+        // $endOfSem   = Carbon::parse($period[1]);
 
+       // $today = Carbon::today();
+//dd($startOfSem);
+       
         while ($startOfSem->lessThanOrEqualTo($endOfSem)) {
             $result->push([
                 'period' => $startOfSem->format('F Y'),
@@ -50,7 +58,6 @@ class ReportsController extends Controller
             ]);
             $startOfSem = $startOfSem->addMonth(1);
         }
-
         return $result;
     }
 

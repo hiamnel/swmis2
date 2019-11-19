@@ -54,7 +54,7 @@ class ProjectController extends Controller
                                                             });
                                         });
             
-             $projects = $query->latest();
+             $projects = $query->orderBy('date_submitted', 'DESC');
             $projects = $query->paginate(5);
 
                     return view('projects.index', [
@@ -90,7 +90,7 @@ class ProjectController extends Controller
     {
         $project->load(['adviser', 'area', 'authors','panel','chair_panel']);
 
-        $faculty = User::where('user_role', User::USER_TYPE_FACULTY)
+        $faculty = User::whereIn('user_role', [User::USER_TYPE_FACULTY, User::USER_TYPE_ADVISER])
                        ->orderBy('lastname')
                        ->get();
 
@@ -112,7 +112,7 @@ class ProjectController extends Controller
 
     public function showCreateProjectPage()
     {
-        $faculty = User::where('user_role', User::USER_TYPE_FACULTY)
+        $faculty = User::whereIn('user_role', [User::USER_TYPE_FACULTY, User::USER_TYPE_ADVISER])
                        ->orderBy('lastname')
                        ->get();
 
@@ -154,13 +154,13 @@ class ProjectController extends Controller
             'academic_year'  => 'required|date_format:Y',
             'file'           => 'required|mimes:pdf',
             'semester'       => 'required',
-            'work_type'      => 'required'
+            'work_type'      => 'required',
+            'date_submitted' => 'required|date|before:tomorrow'
         ];
 
         if (Auth::user()->isRole(User::USER_TYPE_ADMIN)) {
             $rules += [
                 'call_number'    => 'required|string|max:255',
-                'date_submitted' => 'required|date|before:tomorrow',
             ];
         }
 
@@ -181,10 +181,10 @@ class ProjectController extends Controller
             $project->academic_year = $request->input('academic_year');
             $project->semester      = $request->input('semester');
             $project->work_type     = $request->input('work_type');
+            $project->date_submitted = $request->input('date_submitted');
 
             if (Auth::user()->isRole(User::USER_TYPE_ADMIN)) {
                 $project->call_number    = $request->input('call_number');
-                $project->date_submitted = $request->input('date_submitted');
                 $project->project_status = 'approved';
             }
 
@@ -239,13 +239,13 @@ class ProjectController extends Controller
             'academic_year' => 'required|date_format:Y',
             'file'           => 'nullable|mimes:pdf',
             'semester'       => 'required',
-            'work_type'      => 'required'
+            'work_type'      => 'required',
+            'date_submitted' => 'required|date|before:tomorrow'
         ];
 
         if (Auth::user()->isRole(User::USER_TYPE_ADMIN)) {
             $rules += [
                 'call_number'    => 'required|string|max:255',
-                'date_submitted' => 'required|date|before:tomorrow',
             ];
         }
 
@@ -263,10 +263,10 @@ class ProjectController extends Controller
             $project->academic_year = $request->input('academic_year');
             $project->semester      = $request->input('semester');
             $project->work_type     = $request->input('work_type');
+            $project->date_submitted = $request->input('date_submitted');
 
             if (Auth::user()->isRole(User::USER_TYPE_ADMIN)) {
                 $project->call_number    = $request->input('call_number');
-                $project->date_submitted = $request->input('date_submitted');
             }
 
             if ($request->hasFile('file')) {
@@ -279,11 +279,22 @@ class ProjectController extends Controller
             $project->authors()->sync($request->input('author_ids'));
         });
 
-        $redirect = Auth::user()->isRole('student')
-            ? redirect('my-projects')
-            : redirect('projects');
+        // $redirect = Auth::user()->isRole('student')
+        //     ? redirect('my-projects')
+        //     : redirect('my-handled-projects');
 
-        return $redirect->with('message', 'Project has been successfully updated!');
+        // return $redirect->with('message', 'Project has been successfully updated!');
+
+        if (Auth::user()->isRole('student')){
+            return redirect('my-projects')->with('message', 'Project has been successfully updated!');
+        }
+        elseif (Auth::user()->isRole('adviser')){
+            return redirect('my-handled-projects')->with('message', 'Project has been successfully updated!');   
+        }
+        else{
+            return redirect('projects')->with('message', 'Project has been successfully updated!');
+        }
+
     }
 
     protected function saveImagePreviews($filePath)

@@ -49,7 +49,7 @@
                               </select>
                           </div>
                           <button type="submit" class="btn btn-secondary ml-2">Go</button>
-                        @else 
+                        @elseif(Auth::user()->isRole(\App\User::USER_TYPE_ADVISER)) 
                           <div class="form-group">
                               <label for="" class="mr-2">Role</label>
                               <select name="role" class="form-control select2 ml-2">
@@ -58,7 +58,16 @@
                               </select>
                           </div>
                           <button type="submit" class="btn btn-secondary ml-2">Go</button>
-                        @endif
+                          @else (Auth::user()->isRole(\App\User::USER_TYPE_FACULTY))
+                          <div class="form-group">
+                                <label for="" class="mr-2">Role</label>
+                                <select name="role" class="form-control select2 ml-2">
+                                   <option value="Panel" {{ (isset($_GET["role"]) && $_GET["role"] == "Panel") ? 'selected' : '' }}>Panel</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-secondary ml-2">Go</button>
+                          @endif
+
                         </form>
                         
                         <canvas id="canvas"></canvas>
@@ -84,7 +93,7 @@
                                   <th>Panelist</th>
                                   <th>Adviser</th>
                                   <th>Subject Area</th>
-                                  <th>Defens Date</th>
+                                  <th>Defense Date</th>
                                   <th>Call Number</th>
                                   <th></th>
                               </tr>
@@ -156,7 +165,7 @@
             backgroundColor: "#A9A9A9",
             data: semesterGroup['Summer']
           },{
-            label: "Tri-sem",
+            label: "Transition Term",
             backgroundColor: "#000",
             data: semesterGroup['Tri-sem']
           }]
@@ -200,7 +209,7 @@
                       $.each( data.results, function( key, result ) {
                         var authors = "";
                         var panels = "";
-                        panels += "Chair Panel: " + result.chair_panel.fullname  + "</br></br>Members: </br>";
+                        panels +=result.chair_panel ? "Chair Panel: " + result.chair_panel.fullname  + "</br></br>Members: </br>" : "";
                         var authorCount = 1;
                         var panelCount = 1;
  
@@ -240,7 +249,7 @@
                         //   }
                         }
 
-                        if (data.isAdviser) {
+                        if (data.isAdviser || data.currentRole == 'faculty') {
                           var html = "<tr>";
                               html += "<td>";
                               html += result.title;
@@ -249,7 +258,7 @@
                               html += authors;
                               html += "</td>";
                               html += "<td>";
-                              html += result.adviser.fullname;
+                              html += result.adviser ? result.adviser.fullname : '';
                               html += "</td>";
                               html += "<td>";
                               html += result.area ? result.area.name : '';
@@ -273,7 +282,7 @@
                               html += panels;
                               html += "</td>";
                               html += "<td>";
-                              html += result.adviser.fullname;
+                              html += result.adviser ? result.adviser.fullname : '';
                               html += "</td>";
                               html += "<td>";
                               html += result.area ? result.area.name : '';

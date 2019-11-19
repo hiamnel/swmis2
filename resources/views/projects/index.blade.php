@@ -39,7 +39,7 @@
                                     <label class="mr-2">Title</label>
                                     <input type="text" name="title" class="form-control" value="{{ request('title') }}">
                                 </div>
-                                <div class="form-group ml-2">
+                                <!-- <div class="form-group ml-2">
                                         <label class="mr-2">Call Number</label>
                                         <select name="call_number" id="" class="form-control">
                                             <option value=""></option>
@@ -48,7 +48,7 @@
                                                 Without Call Number
                                             </option>
                                         </select>
-                                    </div>
+                                    </div> -->
                                 @if(Auth::user()->isRole(\App\User::USER_TYPE_ADVISER))
                                     <div class="form-group ml-2">
                                         <label class="mr-2">Status</label>
@@ -73,6 +73,16 @@
                                             @foreach($advisers AS $id => $name)
                                                 <option value="{{$id}}" {{ (int)request('adviser_id') === (int)$id ? 'selected' : ''}}>{{$name}}</option>
                                             @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="form-group ml-2">
+                                        <label class="mr-2">Call Number</label>
+                                        <select name="call_number" id="" class="form-control">
+                                            <option value=""></option>
+                                            <option value="with_call_number" {{ request('call_number') === 'with_call_number' ? 'selected' : '' }}>With Call Number</option>
+                                            <option value="without_call_number" {{ request('call_number') === 'without_call_number' ? 'selected' : '' }}>
+                                                Without Call Number
+                                            </option>
                                         </select>
                                     </div>
                                 @endif

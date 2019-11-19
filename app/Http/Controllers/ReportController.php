@@ -18,25 +18,50 @@ class ReportController extends Controller {
         $role = $request->role;
         $adviserId = $request->adviserId;
         $isAdviser = Auth::user()->isRole('adviser');
+        $currentRole = Auth::user()->user_role;
+
         if ($year && $sem) {
-           // $semester  = Project::determinePeriod($year, $sem);
-            $query = Project::query();
-
-            $query->whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved']);
-
             if ($isAdviser) {
                 if ($role == 'Adviser') {
-                    $query->where(['adviser_id' => Auth::user()->id]);
+                    $results = Project::whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved', 'adviser_id' => Auth::user()->id])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
                 } else {
-                    $query->whereHas('project_panel', function($q){
-                        $q->where(['panel_id' => Auth::user()->id]);
-                    });
+                    $results = Project::whereHas('project_panel', function($q){
+                        $q->orWhere(['panel_id' => Auth::user()->id]);
+                })->whereNotNull('date_submitted')->where(['chair_panel_id' => Auth::user()->id, 'semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved'])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
                 }
             } else if (isset($adviserId)) {
-                $query->where(['adviser_id' => $adviserId]);
-            } 
+                $results = Project::whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved','adviser_id' => $adviserId])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
+            } else if ($currentRole == 'faculty') {
+                $results = Project::whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved'])->whereHas('project_panel', function($q){
+                        $q->where(['panel_id' => Auth::user()->id]);
+                    })->orWhere(['chair_panel_id' => Auth::user()->id])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
+            } else {
+                $results = Project::whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved'])->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
+            }
 
-            $results = $query->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
+
+           // $semester  = Project::determinePeriod($year, $sem);
+            // $query = Project::query();
+
+            // $query->whereNotNull('date_submitted')->where(['semester' => $sem, 'academic_year' => $year, 'project_status' => 'approved']);
+
+            // if ($isAdviser) {
+            //     if ($role == 'Adviser') {
+            //         $query->where(['adviser_id' => Auth::user()->id]);
+            //     } else {
+            //         $query->whereHas('project_panel', function($q){
+            //             $q->where(['panel_id' => Auth::user()->id]);
+            //         })->orWhere(['chair_panel_id' => Auth::user()->id]);
+            //     }
+            // } else if (isset($adviserId)) {
+            //     $query->where(['adviser_id' => $adviserId]);
+            // } else if ($currentRole == 'faculty') {
+            //     $query->whereHas('project_panel', function($q){
+            //             $q->where(['panel_id' => Auth::user()->id]);
+            //         })->orWhere(['chair_panel_id' => Auth::user()->id]);
+            // } 
+
+            // $results = $query->with('authors', 'panel', 'adviser', 'area', 'chair_panel')->get();
 
             // $results = $projects->filter(function (Project $project) use ($semester) {
             //         return Carbon::parse($project->date_submitted)->between(
@@ -68,7 +93,8 @@ class ReportController extends Controller {
 				'results' => $results,
 				'isAdviser' => $isAdviser,
 				'role' => $role,
-				'semester' => $semester
+				'semester' => $semester,
+                'currentRole' => $currentRole
 			]; 
 
 			$pdf = PDF::loadView('pdf.report', $data);

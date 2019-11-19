@@ -66,7 +66,7 @@
             <table class="table table-bordered">
             	<thead>
 
-            		@if ($isAdviser)
+            		@if ($isAdviser || $currentRole == 'faculty')
 						<tr class="bg-primary text-white text-center">
 						  <th></th>
 	                      <th>Project Title</th>
