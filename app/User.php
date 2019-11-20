@@ -80,4 +80,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Project::class, 'adviser_id');
     }
+
+    public function chairPaneledProjects()
+    {
+        return $this->hasMany(Project::class, 'chair_panel_id');
+    }
 }

@@ -12,6 +12,7 @@ class AreaController extends Controller
     public function showAreasListPage()
     {
         $areas = Area::orderBy('name')->get();
+
         return view('areas.index', [
             'areas' => $areas 
         ]);

@@ -54,6 +54,7 @@
                               <label for="" class="mr-2">Role</label>
                               <select name="role" class="form-control select2 ml-2">
                                   <option value="Adviser" {{ (isset($_GET["role"]) && $_GET["role"] == "Adviser") ? 'selected' : '' }}>Adviser</option>
+                                  <option value="Chair Panel" {{ (isset($_GET["role"]) && $_GET["role"] == "Chair Panel") ? 'selected' : '' }}>Chair Panel</option>
                                  <option value="Panel" {{ (isset($_GET["role"]) && $_GET["role"] == "Panel") ? 'selected' : '' }}>Panel</option>
                               </select>
                           </div>
@@ -101,6 +102,7 @@
                                 <tr class="bg-primary text-white">
                                   <th>Project Title</th>
                                   <th>Authors</th>
+                                  <th>Panelist</th>
                                   <th>Adviser</th>
                                   <th>Subject Area</th>
                                   <th>Date</th>
@@ -129,8 +131,6 @@
         var adviserId = urlParams.has('adviser') ? urlParams.get('adviser') : '';
         var role = urlParams.has('role') ? urlParams.get('role') : 'Adviser';
         var data = @json($data ?? []);
-
-        console.log('role', role);
 
         var semesterGroup = {
           '1st': [],
@@ -191,7 +191,6 @@
                 $('input[name="semester"]').val(semester);
                 $('input[name="adviserId"]').val(adviserId);
                 $('input[name="role"]').val(role);
-                $('input[name="test"]').val("testing");
 
                 if (year) {
                   $.ajax({
@@ -223,15 +222,6 @@
                           panelCount++;
                         });
 
-                        // var status = "";
-                        // if(result.project_status == 'pending') {
-                        //   status = "<span class='d-block badge badge-secondary text-white mb-3'>PENDING</span>";
-                        // } else if (result.project_status == 'rejected') {
-                        //   status = "<span class='d-block badge badge-danger text-white mb-3'>REJECTED</span>";
-                        // } else {
-                        //   status = "<span class='d-block badge badge-success text-white mb-3'>APPROVED</span>";
-                        // }
-
                         var actions = "";
                         if (data.isAdviser) {
                           var url = "my-handled-projects/" + result.id;
@@ -256,6 +246,9 @@
                               html += "</td>";
                               html += "<td>";
                               html += authors;
+                              html += "</td>";
+                              html += "<td>";
+                              html += panels;
                               html += "</td>";
                               html += "<td>";
                               html += result.adviser ? result.adviser.fullname : '';

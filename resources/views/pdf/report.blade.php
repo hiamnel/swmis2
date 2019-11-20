@@ -67,25 +67,25 @@
             	<thead>
 
             		@if ($isAdviser || $currentRole == 'faculty')
-						<tr class="bg-primary text-white text-center">
+						<tr class="text-left">
 						  <th></th>
-	                      <th>Project Title</th>
-                          <th>Authors</th>
-                          <th>Adviser</th>
-                          <th>Subject Area</th>
-                          <th>Date</th>
-                          <th>Role</th>
+	                      <th align="left">Project Title</th>
+                          <th align="left">Authors</th>
+                          <th align="left">Adviser</th>
+                          <th align="left">Subject Area</th>
+                          <th align="left">Date</th>
+                          <th align="left">Role</th>
 	                  	</tr>
                   	@else 
-                  		<tr class="bg-primary text-white text-center">
+                  		<tr class="text-left">
 	                      <th></th>
-	                      <th>Project Title</th>
-	                      <th>Authors</th>
-	                      <th>Panelist</th>
-	                      <th>Adviser</th>
-	                      <th>Subject Area</th>
-	                      <th>Defens Date</th>
-	                      <th>Call Number</th>
+	                      <th align="left">Project Title</th>
+	                      <th align="left">Authors</th>
+	                      <th align="left">Panelist</th>
+	                      <th align="left">Adviser</th>
+	                      <th align="left">Subject Area</th>
+	                      <th align="left">Defense Date</th>
+	                      <th align="left">Call Number</th>
 	                  	</tr>
                   	@endif
             	</thead>
@@ -93,7 +93,7 @@
                 @foreach($results as $result)
                 <?php 
                 	$authors = "";
-            		$panels = "Chair Panel: " . $result->chair_panel->fullname . " Members: ";
+            		$panels = $result->chair_panel ? "Chair Panel: " . $result->chair_panel->fullname . " Members: " : "";
 
             		$authorCount = count($result->authors) - 1;
 	            	foreach ($result->authors as $key => $author) {
@@ -108,24 +108,24 @@
                 ?>
                 @if ($isAdviser)
                     <tr>
-                    	<td>{{ $count }}</td>
+                    	<td width="3%">{{ $count }}</td>
                         <td>{{ $result->title }}</td>
                         <td>{{ $authors }}</td>
-                        <td width="10%">{{ $result->adviser->fullname }}</td>
-                        <td width="10%">{{ $result->area->name }}</td>
+                        <td>{{ $result->adviser ? $result->adviser->fullname : '' }}</td>
+                        <td>{{ $result->area ? $result->area->name : ''}}</td>
                         <td>{{ $result->date_submitted }}</td>
-                        <td width="10%">{{ $role }}</td>
+                        <td>{{ $role }}</td>
                     </tr>
                 @else
                   	<tr>
-                    	<td>{{ $count }}</td>
+                    	<td width="3%">{{ $count }}</td>
                         <td>{{ $result->title }}</td>
                         <td>{{ $authors }}</td>
                         <td>{{ $panels }}</td>
-                        <td width="10%">{{ $result->adviser->fullname }}</td>
-                        <td width="10%">{{ $result->area->name }}</td>
-                        <td>{{ $result->date_submitted }}</td>
-                        <td width="10%">{{ $result->call_number }}</td>
+                        <td width="10%">{{ $result->adviser ? $result->adviser->fullname : '' }}</td>
+                        <td width="8%">{{ $result->area ? $result->area->name : '' }}</td>
+                        <td width="8%">{{ $result->date_submitted }}</td>
+                        <td width="8%">{{ $result->call_number }}</td>
                     </tr>
                 @endif
 

@@ -15,25 +15,26 @@ class ReportsController extends Controller
     public function monthlyViews(Request $request)
     {
         $projects = Auth::user()->projects()->select('projects.id', 'projects.title')->get()->pluck('title', 'id');
+
+        $selectedYear = $request->input('academic_year', date('Y'));
         $period   = $this->getCurrentPeriod($request);
         $data     = collect();
 
         if ($projectId = $request->input('project_id', null)) {
-            $data = $this->getData($projectId, $period['period'], $period['selectedYear']);
+            $data = $this->getData($projectId, $selectedYear);
         }
-
 
         return view('reports.monthly-view', array_merge($period, compact('projects', 'data')));
     }
 
-    protected function getData(int $projectId, array $period, $year)
+    protected function getData(int $projectId, $year)
     {
         $result = collect();
 
         $startOfSem = Carbon::parse('first day of January ' . $year);
-        $start  = $startOfSem->format('Y-m-d');
+        $start  = $startOfSem->format('Y-m-d'); //2019-01-01
         $endOfSem   = Carbon::parse('last day of December ' . $year);
-        $end = $endOfSem->format('Y-m-d');
+        $end = $endOfSem->format('Y-m-d'); //2019-12-31
 
         /** @var Collection $data */
         $data = \DB::table((new ProjectTraffic())->getTable())
@@ -49,8 +50,7 @@ class ReportsController extends Controller
         // $endOfSem   = Carbon::parse($period[1]);
 
        // $today = Carbon::today();
-//dd($startOfSem);
-       
+
         while ($startOfSem->lessThanOrEqualTo($endOfSem)) {
             $result->push([
                 'period' => $startOfSem->format('F Y'),
@@ -58,6 +58,9 @@ class ReportsController extends Controller
             ]);
             $startOfSem = $startOfSem->addMonth(1);
         }
+
+       
+       // dd($result);
         return $result;
     }
 
