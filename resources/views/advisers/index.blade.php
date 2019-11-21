@@ -54,7 +54,7 @@
                                     <td>{{ $adviser->username }}</td>
                                     <td> <a class="btn btn-success px-3" href="{{ url("advisers/{$adviser->id}/edit") }}" class="mr-2">Edit</a></td>
                                         <td> 
-                                            @if(count($adviser->handledProjects) < 1 && count($adviser->chairPaneledProjects) < 1)
+                                            @if(count($adviser->handledProjects) < 1 && count($adviser->chairPaneledProjects) < 1 && count($adviser->paneledProjects) < 1)
                                             <form class="delete-form" action="{{ url("advisers/{$adviser->id}/delete") }}">
                                             {{ csrf_field() }}
                                             <a class="btn btn-danger px-3" href="#" onclick="confirmDelete(this)" class="text-danger">Delete

@@ -37,7 +37,7 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label class="col-sm-3 col-form-label">Role</label>
+                            <label class="col-sm-3 col-form-label"><font color="red"> *</font>Role</label>
                             <div class="col-sm-9">
                                 <select name="user_role" class="form-control" id="select2-ajax-main" >
                                     <option value=""></option>

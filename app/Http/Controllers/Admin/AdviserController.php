@@ -26,7 +26,7 @@ class AdviserController extends Controller
                         ->orWhere('lastname', 'like', "%{$q}%");
             });
         }
-        $advisers = $query->with('handledProjects', 'chairPaneledProjects')->orderBy('lastname')->get();
+        $advisers = $query->with(['handledProjects', 'chairPaneledProjects', 'paneledProjects'])->orderBy('lastname')->get();
 
         return view('advisers.index', [
             'advisers' => $advisers
@@ -54,6 +54,7 @@ class AdviserController extends Controller
             'lastname'       => 'required|string|max:200',
             'middle_initial' => 'nullable|string|size:1',
             'username'       => 'required|string|unique:users,username',
+            'user_role'       => 'required|string|max:200',
         ]);
 
         $adviser                 = new User();
