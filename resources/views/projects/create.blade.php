@@ -96,7 +96,7 @@
                             <label class="col-sm-2 col-form-label"><font color="red"> *</font>Chair Panel</label>
                             <div class="col-sm-10">
                                 <select name="chair_panel_id" class="form-control select2">
-                                    <optio disabled selected>SELECT YOUR CHAIR PANEL</option>
+                                    <option disabled selected>SELECT YOUR CHAIR PANEL</option>
                                     @foreach($advisers AS $adviser)
                                         <option value="{{ $adviser->id }}" {{ old('chair_panel_id') == $adviser->id ? 'selected' : '' }}>{{ $adviser->fullname }}</option>
                                     @endforeach

@@ -102,7 +102,7 @@
                                 <tr class="bg-primary text-white">
                                   <th>Project Title</th>
                                   <th>Authors</th>
-                                  <th>Panelist</th>
+                                  <!-- <th>Panelist</th> -->
                                   <th>Adviser</th>
                                   <th>Subject Area</th>
                                   <th>Date</th>
@@ -247,9 +247,9 @@
                               html += "<td>";
                               html += authors;
                               html += "</td>";
-                              html += "<td>";
-                              html += panels;
-                              html += "</td>";
+                              // html += "<td>";
+                              // html += panels;
+                              // html += "</td>";
                               html += "<td>";
                               html += result.adviser ? result.adviser.fullname : '';
                               html += "</td>";
