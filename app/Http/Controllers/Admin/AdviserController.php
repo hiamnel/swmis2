@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\User;
+use App\Project;
+use Auth;
+use Response;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
@@ -99,5 +102,12 @@ class AdviserController extends Controller
         $adviser->delete();
 
         return redirect('advisers')->with('message', 'Teacher deleted successfully!');
+    }
+
+    public function countProject(){
+
+         $count = Project::where(['project_status' => 'pending', 'adviser_id' => Auth::user()->id])->count();
+
+         return Response::json(['count' => $count]);
     }
 }

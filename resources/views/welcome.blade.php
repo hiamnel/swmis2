@@ -104,6 +104,9 @@
                         <p class="card-text text-muted">
                             Defense Date: {{ date_create_immutable($project->date_submitted)->format('F Y') }}
                         </p>
+                        <p class="card-text text-muted">
+                            Date Submitted: {{ date_create_immutable($project->date_created)->format('F Y') }}
+                        </p>
                     </div>
                 @endforeach
                 <div class="pt-3 d-flex justify-content-center">

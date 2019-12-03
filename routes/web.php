@@ -36,9 +36,16 @@ Route::get('projects/{project}/print-approval', 'ProjectController@doDeleteProje
 Route::get('profile', 'ProfileController@showProfilePage');
 Route::put('profile', 'ProfileController@doUpdateProfile');
 Route::post('print-report', 'ReportController@generatePdf');
+    Route::get('projectapprove', 'ReportController@approveProject');
+
+    Route::any('setNotife/{notife_id}/{proj_id}', 'HomeController@setNotife');
+
+    
+
 /**
  * ADMIN ROUTES
  */
+Route::get('send', 'HomeController@sendNotification');
 
 Route::group(['namespace' => 'Admin'], function () {
 
@@ -58,6 +65,11 @@ Route::group(['namespace' => 'Admin'], function () {
     Route::post('advisers/{adviserId}/update', 'AdviserController@doUpdateAdviser');
     // delete new adviser
     Route::get('advisers/{adviserId}/delete', 'AdviserController@doDeleteAdviser');
+
+    Route::get('count-project', 'AdviserController@countProject');
+
+
+
 
      // AREAS
      // list all areas
@@ -91,6 +103,7 @@ Route::group(['namespace' => 'Adviser'], function () {
     Route::get('my-handled-projects', 'HandledProjectsController@index');
     Route::get('my-handled-projects/{project}', 'HandledProjectsController@show');
     Route::put('my-handled-projects/{project}', 'HandledProjectsController@update');
+
 });
 
 Route::group(['prefix' => 'reports'], function () {

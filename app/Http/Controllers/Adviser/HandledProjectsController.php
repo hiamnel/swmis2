@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Adviser;
 
 use Auth;
+use App\User;
 use App\Http\Controllers\Controller;
 use App\Project;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
+use App\Notifications\MyNotifications;
+use Notification;
+
 
 class HandledProjectsController extends Controller
 {
@@ -67,7 +71,7 @@ class HandledProjectsController extends Controller
     }
 
     public function update(Project $project, Request $request)
-    {
+     {
         $request->validate([
             'project_status' => 'required|in:rejected,approved'
         ]);
@@ -75,6 +79,32 @@ class HandledProjectsController extends Controller
         $project->project_status = $request->input('project_status');
 
         $project->save();
+
+  ///  $proj = Project::where('id', $project->id)->pluck('authors.id')->toArray();
+
+        $projAuthor = [];
+
+            foreach ($project->authors as $author) {
+
+                $projAuthor[] = $author->id;
+            }
+
+
+
+        $adviser = User::where('id', $project->adviser_id)->first();
+        
+        $notice = User::whereIn('id', $projAuthor)->orWhere('user_role', User::USER_TYPE_ADMIN)->get();
+
+         $users = [
+            'status' => $request->input('project_status'),
+            'project_id' =>  $project->id,
+            'title' => $project->title,
+            'adviser_id' =>  $project->adviser_id,
+            'adviser_fname' => $adviser->firstname,
+            'adviser_lname' => $adviser->lastname
+        ];
+
+         Notification::send($notice, new MyNotifications($users));
 
         return redirect()->back();
     }

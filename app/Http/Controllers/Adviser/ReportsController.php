@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: adriannatabio
- * Date: 05/10/2019
- * Time: 1:21 PM
- */
 
 namespace App\Http\Controllers\Adviser;
 
@@ -99,7 +93,7 @@ class ReportsController extends Controller
                     return $project->academic_year == $year && $project->semester == 4;
                 })->count()
             ]);
-            
+
         }
 
         return $data;

@@ -9,6 +9,8 @@ use App\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use DB;
+
 
 class HomeController extends Controller
 {
@@ -95,5 +97,22 @@ class HomeController extends Controller
             $users->groupBy('user_role')->all(),
             compact('keywords', 'areas')
         );
+    }
+
+    public function setNotife($notife_id, $proj_id){
+
+          
+              $notif = DB::table('notifications')->where('id',$notife_id)->update(['read_at' => date('Y-m-d')]);
+
+               // if (Auth::user()->isRole(User::USER_TYPE_ADMIN)) {
+
+                       return redirect('projects/'.$proj_id.'/edit');
+
+                // }else{
+                
+                //           return redirect('my-projects');
+
+                // }
+
     }
 }

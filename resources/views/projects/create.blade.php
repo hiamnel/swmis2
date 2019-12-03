@@ -37,7 +37,8 @@
                                 <select name="author_ids[]" class="form-control select2" multiple data-maximum-selection-length="3" data-allow-clear="true">
                                     <option disabled>SELECT AUTHOR(S)</option>
                                     @foreach($students AS $student)
-                                        <option value="{{ $student->id }}" {{ in_array($student->id, (array)old('author_ids')) ? 'selected="selected"' : '' }}>{{ $student->fullname }}</option>
+
+                                        <option value="{{ $student->id }}" {{ in_array($student->id, (array)old('author_ids', Auth::user()->id)) ? 'selected="selected"' : '' }}>{{ $student->fullname }}</option>
                                     @endforeach
                                 </select>
                             </div>

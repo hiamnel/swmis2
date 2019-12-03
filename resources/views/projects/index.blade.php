@@ -128,9 +128,15 @@
                                     </td>
                                     <td>
                                         <ol class="pl-3">
+                                            Chair Panel: 
+                                            <li>{{ isset($project->chair_panel) ? $project->chair_panel->fullname : '' }}</li>
+                                        </ol>
+                                        <ol class="pl-3">
+                                            Panel Members: 
                                             <li>{!! isset($project->panel) ? $project->panel->implode('fullname', '</li><li>') : '' !!}</li>
                                         </ol>
                                     </td>
+                                    
                                     <td>{{ isset($project->adviser) ? $project->adviser->fullname : '' }}</td>
                                     <td>{{ isset($project->area) ? $project->area->name : ''}}</td>
                                     <td>{{ $project->call_number ? $project->call_number : 'N/A' }}</td>

@@ -18,7 +18,15 @@
     <link href="{{ asset('fancybox/jquery.fancybox.min.css') }}" rel="stylesheet">
     <link href="{{ asset('fontawesome/css/all.min.css') }}" rel="stylesheet">
     <link href="{{ asset('css/Chart.min.css') }}" rel="stylesheet">
+    <style>
+        .scroll {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+    </style>
 </head>
+
 <body>
 <div id="app">
     <nav class="navbar navbar-expand-md navbar-dark bg-success navbar-laravel">
@@ -90,6 +98,35 @@
                             <a class="nav-link" href="{{ url('register') }}">Register</a>
                         </li>
                     @else
+                        @if(Auth::user()->isRole('adviser'))
+                        <li class="nav-item">
+                        <a class="nav-link" href="{{ url('my-handled-projects?title=&status=pending') }}" id="alertsDropdown" role="button">
+                          <i class="fas fa-bell" style="font-size: 20px;margin-top: 0px"></i>
+                          <span class="badge badge-danger" style="font-size: 10px" id="projectCount">0</span>
+                        </a>
+    
+                        </li>
+                        @elseif(Auth::user()->isRole('student') || Auth::user()->isRole('admin'))
+                       <li class="nav-item dropdown no-arrow mx-1">
+                            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <i class="fas fa-bell" style="font-size: 20px;margin-top: 0px"></i>
+                              <span class="badge badge-danger" style="font-size: 10px" id="approveCount">0</span>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" style="width: 500px;border:solid gray 1px" aria-labelledby="alertsDropdown">
+                            <div>
+                                <div class="card-header" style="height: 50px">Approved Projects</div>
+                                    <div class="card-body scroll listInfo" id="listInfo" style="margin-left: 0;height: 300">
+                                    
+                   
+                                    </div>
+                                </div>
+                            </div>
+                    </li>
+
+
+
+
+                        @endif
                         <li class="nav-item dropdown">
                             <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button"
                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
@@ -130,6 +167,71 @@
 </div>
 </body>
 @stack('js')
+<script>
+  
+$(document).ready(function () {
+
+    //setTimeout(countNotes, 100);
+    setTimeout(countApprove, 100);
+
+    setTimeout(function() {
+  countNotes() // runs first
+  countApprove() // runs second
+}, 100)
+
+
+    function countNotes(){
+
+        $.ajax({
+            url: "{{URL::to('count-project')}}",
+            type: 'GET',
+            success: function(data){
+
+                console.log(data);
+                $("#projectCount").text(data.count);
+            },
+            complete:function(data){
+                setTimeout(countNotes,3000);
+            }
+        });
+
+    }
+
+     function countApprove(){
+
+        $.ajax({
+            url: "{{URL::to('projectapprove')}}",
+            type: 'GET',
+            success: function(data){
+
+                $("#approveCount").text(data.count);
+                var appendValues = '';
+
+
+                for(var a=0; a<data.details.length; a++){
+
+                     appendValues += '<div style="border:thin black;background-color: lightgray">'
+                     appendValues += '<p style="margin-top: 5px;font-size: 16px;margin-left: 50px">'+data.details[a].data.title+' is Approved by '+data.details[a].data.adviser_fname +' '+ data.details[a].data.adviser_lname  +'</p>'
+                     appendValues += '<a href="{{URL::to("setNotife")}}/'+data.details[a].id+'/'+data.details[a].data.project_id+'"><button class="btn btn-primary" style="margin-left: 30px">View</button></a><div style="border:solid 1px rgba(0, 0, 0, 0.125)"></div>'
+                 }
+
+
+                 $( ".listInfo" ).html(appendValues);
+
+            },
+            complete:function(data){
+                setTimeout(countApprove,3000);
+            }
+        });
+
+    }
+});
+
+
+
+</script>
+
+
 <script>
   function confirmLogout() {
     var x = confirm("Are you sure you want to logout?");

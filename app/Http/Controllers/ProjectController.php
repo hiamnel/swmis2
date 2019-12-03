@@ -14,6 +14,10 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Validation\Validator;
+use App\Notifications\MyNotifications;
+use Notification;
+
+
 
 class ProjectController extends Controller
 {
@@ -139,7 +143,7 @@ class ProjectController extends Controller
         $selectedPanels[] = $request->input('adviser_id');
 
         $rules = [
-            'doi'            => 'nullable|string',
+            'doi'            => 'nullable|unique:projects',
             'title'          => 'required|string',
             'author_ids'     => 'required|array',
             'author_ids.*'   => 'required|exists:users,id|distinct',
@@ -157,6 +161,10 @@ class ProjectController extends Controller
             'work_type'      => 'required',
             'date_submitted' => 'required|date|before:tomorrow'
         ];
+
+
+
+
 
         if (Auth::user()->isRole(User::USER_TYPE_ADMIN)) {
             $rules += [
@@ -197,11 +205,15 @@ class ProjectController extends Controller
             $project->authors()->attach($request->input('author_ids'));
 
             $this->saveImagePreviews($project->uploaded_file_path);
+
         });
 
         $redirect = Auth::user()->isRole('student')
             ? redirect('my-projects')
             : redirect('projects');
+
+
+        
 
         if (Auth::user()->isRole('admin')){
             return $redirect->with('message', 'New project created successfully!'); }

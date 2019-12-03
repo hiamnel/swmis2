@@ -5,10 +5,12 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use PDF;
 use App\Project;
+use App\MyNotifications;
 use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
+use Response;
 
 class ReportController extends Controller {
 	public function generatePdf(Request $request) 
@@ -73,4 +75,20 @@ class ReportController extends Controller {
 
 		
 	}
+
+    public function approveProject(){
+
+             //$count = Project::where(['project_status' => 'pending', 'adviser_id' => Auth::user()->id])->count();
+
+               $users = User::find(Auth::user()->id);
+
+                 $count = $users->unreadNotifications->count();
+
+                 $details = $users->unreadNotifications;
+                 
+
+            return Response::json(['count' => $count, 'details' => $details]);
+
+
+    }
 }
